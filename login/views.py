@@ -14,6 +14,15 @@ from django.utils import timezone
 from django.db.models.functions import TruncDate
 from bus.models import ScheduleCode
 from events.models import Event
+from .models import Student, Campus
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.shortcuts import render
+from .forms import ContactForm
+from django.conf import settings 
+from django.core.mail import send_mail, BadHeaderError
+
 
 # Create your views here.
 def landing(request):
@@ -90,49 +99,77 @@ def login(request):
         return render(request, 'login/login.html')
 
 
+import re
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import RegisteredStudent, Student  # Adjust if models are elsewhere
+
+from django.db import IntegrityError
+from django.shortcuts import render, redirect
+from .models import Student, Campus
+from django.utils import timezone
+from django.contrib import messages
+
 def register(request):
     if request.method == 'POST':
-        student_no = request.POST['student_no']
-        name = request.POST['name']
-        surname = request.POST['surname']
-        student_email = request.POST['student_email']
-        password = request.POST['password']
-        password_confirmation = request.POST['confirm_password']
-        
-        pattern =  "@tut4life.ac.za"
-        
-        if (name == '' or surname == '' or student_email ==  '' 
-           or password == '' or password_confirmation == ''):
-            messages.error(request,"Fill all data fields!")
-            return redirect('/login/register')
-        
-        if len(password) < 8 :
-            messages.error(request,"Password Length > 8")
-            return redirect('/login/register')
-        
-        if not re.search(pattern,student_email):
-            messages.error(request,"Use TUT student email")
-            return redirect('/login/register')
-        
+        student_no = request.POST.get('student_no')
+        name = request.POST.get('name')
+        surname = request.POST.get('surname')
+        student_email = request.POST.get('student_email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+ 
+        form_data = {
+            'student_no': student_no,
+            'name': name,
+            'surname': surname,
+            'student_email': student_email
+        }
 
-        if RegisteredStudent.objects.filter(studentNumber=student_no).exists():
-            if password == password_confirmation:
-                camp_id = RegisteredStudent.objects.all().get(studentNumber=student_no).campus_id
-                student = Student(studentNumber=student_no, name=name, surname=surname,
-                                studentEmail=student_email, password=password,
-                                campus_id=camp_id)
-                student.save()
-                messages.success(request,"Account Created!")
-                return redirect("/login/register")
-            else:
-                messages.error(request,"password not matching")
-                return redirect('/login/register')
-        else:
-            messages.error(request,"Not a TUT registered student")
-            return redirect('/login/register')
+        errors = {}
 
-    else:
-        return render(request, "login/register.html")
+        # Manual duplicate checks (better UX than letting the DB error)
+        if Student.objects.filter(studentNumber=student_no).exists():
+            errors['student_no'] = "This student number is already registered."
+        if Student.objects.filter(studentEmail=student_email).exists():
+            errors['student_email'] = "This email is already registered."
+
+        if password != confirm_password:
+            errors['confirm_password'] = "Passwords do not match."
+
+        if errors:
+            return render(request, 'login/register.html', {
+                'form_data': form_data,
+                'errors': errors
+            })
+
+        try:
+            campus = Campus.objects.first()  # Replace with actual logic
+            student = Student(
+                studentNumber=student_no,
+                name=name,
+                surname=surname,
+                studentEmail=student_email,
+                password=password,  # ❗ You should hash this
+                campus_id=campus,
+                login_time=timezone.now()
+            )
+            student.save()
+            messages.success(request, "Registration successful.")
+            return redirect('account:login')
+
+        except IntegrityError:
+            errors['student_no'] = "This student number already exists."
+            return render(request, 'login/register.html', {
+                'form_data': form_data,
+                'errors': errors
+            })
+
+    return render(request, 'login/register.html', {
+        'form_data': {},
+        'errors': {}
+    })
+
 
 
 def admin(request):
@@ -155,7 +192,10 @@ def about(request):
 def contact(request):
     return render(request, 'contact_us/contact_us.html')
 
-
+def landing_about(request):
+    return render(request,'login/landing_about.html')
+def landing_contact(request):
+    return render(request, 'login/landing_contactUs.html')
 
 def update_profile(request):
         stud_id = request.session.get("stud_id")
@@ -184,3 +224,41 @@ def update_profile(request):
 
 
         return render(request, 'home/update_profile.html', {'student': student, 'initials': initials})
+
+
+User = get_user_model()
+
+ # Adjust import if models are in a different module
+
+def reset_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "login/reset_password.html")
+
+        student = Student.objects.filter(studentEmail=email).first()
+        admin = Admin.objects.filter(email=email).first()
+
+        if student:
+            student.password = new_password  # You should hash passwords in production
+            student.save()
+            messages.success(request, "Student password reset successfully.")
+            return redirect("account:login")
+        elif admin:
+            admin.password = new_password  # You should hash passwords in production
+            admin.save()
+            messages.success(request, "Admin password reset successfully.")
+            return redirect("account:login")
+        else:
+            messages.error(request, "No student or admin found with that email.")
+
+    return render(request, "login/reset_password.html")
+
+
+
+
+

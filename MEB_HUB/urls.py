@@ -27,4 +27,5 @@ urlpatterns = [
     path('administration/',include('administration.urls')),
     path('events/',include('events.urls')),
     path('', views.landing, name='landing')
+    
 ]

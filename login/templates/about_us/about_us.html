@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
+    <title>About Us - M.E.B</title>
     <style>
+        :root {
+            --primary-color: #1286ad;
+            --primary-dark: #03242f;
+            --secondary-color: #e9ecef;
+            --background-light: #f8f9fa;
+            --text-dark: #343a40;
+            --text-light: #ffffff;
+            --accent-color: #0aa2d9;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
         /* General Reset */
         * {
             margin: 0;
@@ -14,22 +26,27 @@
 
         /* Body Styling */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f4f4; 
-            color: #333; 
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 60px;
         }
 
-    
+        /* Navigation */
         nav {
             background-color: #1286ad; 
             color: #fff;
-            padding: 10px 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .nav-title {
@@ -37,50 +54,56 @@
             font-weight: bold;
         }
 
-        
+        .nav-title a {
+            color: white;
+            text-decoration: none;
+        }
 
         .nav-menu {
-            
-            flex-direction: column;
-            align-items: flex-start;
+            display: flex;
+            gap: 20px;
         }
 
         .nav-menu a {
-            display: inline;
             text-decoration: none;
             color: white;
-            padding: 10px;
-            width: 150px;
-            text-align: center;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         .nav-menu a:hover {
-            background-color: #555;
+            background-color: rgba(255,255,255,0.2);
         }
 
-        .profile-button:hover {
-            background-color: #555;
+        .nav-menu .btn-login {
+            background-color: white;
+            color: #1286ad;
+            font-weight: bold;
         }
 
-        
+        .nav-menu .btn-login:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Main Content */
         .main-container {
             max-width: 1200px;
             margin: 40px auto;
-            padding: 20px;
+            padding: 30px;
             background-color: #fff; 
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        
         .content-container {
             text-align: center;
         }
 
         .content-container h1 {
             font-size: 36px;
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 30px;
+            color: #1286ad;
         }
 
         .content-container p {
@@ -88,63 +111,279 @@
             line-height: 1.6;
             color: #555;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto 20px;
+            text-align: left;
         }
 
-    
+        /* Team Section - Minimalist Design */
+        .team-section {
+            margin-top: 60px;
+            padding: 20px 0;
+        }
+
+        .team-section h2 {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .team-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent-color);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--accent-color);
+            text-align: left;
+        }
+
+        .team-member:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .team-member h3 {
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .team-member p {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Footer (unchanged from your original) */
         .footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
+            background-color: var(--text-dark);
+            color: var(--text-light);
             width: 100%;
         }
 
-    
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 40px 20px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .footer-column h4 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        .footer-column p, .footer-column a {
+            margin-bottom: 12px;
+            display: block;
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-bottom {
+            padding: 15px;
+            background-color: #212529;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        /* Responsive */
         @media screen and (max-width: 768px) {
             nav {
                 flex-direction: column;
+                gap: 15px;
+                padding: 15px;
             }
 
             .nav-menu {
-                display: flex;
-                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
             }
 
-            .profile-button {
-                margin-bottom: 10px;
+            .main-container {
+                margin: 20px 15px;
+                padding: 20px;
+            }
+
+            .content-container h1 {
+                font-size: 28px;
+            }
+
+            .content-container p {
+                font-size: 16px;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .team-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="nav-title">M.E.B</div>
+        <div class="nav-title"><a href="{% url 'account:home' %}">M.E.B</a></div>
         <div class="nav-menu" id="navMenu">
-            <a href="{% url 'account:home' %}">Home</a>
             <a href="{% url 'account:about' %}">About Us</a>
             <a href="{% url 'account:contact' %}">Contact Us</a>
-            <a href="{% url 'account:logout' %}">Log Out</a>
+            <a href="{% url 'account:home' %}" class="btn-login">Home</a>
         </div>
     </nav>
 
     <div class="main-container">
         <div class="content-container">
-            <h1>About Us</h1>
-            <p>Welcome to M.E.B, your premier campus companion. We're a team of innovators dedicated to transforming the university experience. Our mission is to provide students with a comprehensive navigation tool that simplifies campus life, fosters connection, and unlocks new opportunities.
-
-                At M.E.B, we believe that university life should be about discovery, growth, and connection – not getting lost on campus or missing out on events. That's why we've created an intuitive, user-friendly app that puts campus life at your fingertips.
+            <h1>About M.E.B</h1>
+            <p>Welcome to M.E.B, your premier campus companion. We're a team of innovators dedicated to transforming the university experience. Our mission is to provide students with a comprehensive navigation tool that simplifies campus life, fosters connection, and unlocks new opportunities.</p>
             
-                Our team is passionate about empowering students to make the most of their university experience. We're committed to continuously improving and expanding our platform to meet the evolving needs of our users.
+            <p>At M.E.B, we believe that university life should be about discovery, growth, and connection – not getting lost on campus or missing out on events. That's why we've created an intuitive, user-friendly app that puts campus life at your fingertips.</p>
             
-                Join the M.E.B community today and start navigating your campus with confidence!</p>
+            <p>Our team is passionate about empowering students to make the most of their university experience. We're committed to continuously improving and expanding our platform to meet the evolving needs of our users.</p>
+            
+            <p>Join the M.E.B community today and start navigating your campus with confidence!</p>
+            
+            <div class="team-section">
+                <h2>Our Team</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <h3>N Mokwena</h3>
+                        <p>Lead developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>T Msimanga</h3>
+                        <p>Backend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>S Bembe</h3>
+                        <p>UI Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>B Mpatlanyane</h3>
+                        <p>Backend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>S Mtubane</h3>
+                        <p>Frontend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>N Vilakazi</h3>
+                        <p>Frontend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>L Nokilana</h3>
+                        <p>Backend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>M Khomola</h3>
+                        <p>Backend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>K Magampa</h3>
+                        <p>Frontend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>M Shabe</h3>
+                        <p>Frontend Developer</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>Z Sagida</h3>
+                        <p>Frontend Developer</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer class="footer">&copy; 2025 M.E.B. All Rights Reserved.</footer>
-
-    
+    <!-- Footer (unchanged from your original) -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>Contact Us</h4>
+                <p><i class="bi bi-envelope"></i> <a href="mailto:support@meb-system.com">support@meb-system.com</a></p>
+                <p><i class="bi bi-telephone"></i> <a href="tel:+1234567890">+27 (635) 138-8666</a></p>
+                <p><i class="bi bi-geo-alt"></i> 2 Aubrey Matlakala St, Pretoria</p>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <a href="{% url 'account:about' %}"><i class="bi bi-info-circle"></i> About Us</a>
+                <a href="{% url 'account:contact' %}"><i class="bi bi-headset"></i> Contact Us</a>
+                <a href="#"><i class="bi bi-shield-lock"></i> Privacy Policy</a>
+            </div>
+            
+            <div class="footer-column">
+                <h4>M.E.B System</h4>
+                <p>A comprehensive platform designed to enhance student life through seamless access to campus resources and services.</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            &copy; 2025 M.E.B. All Rights Reserved.
+        </div>
+    </footer>
 </body>
 </html>

@@ -1,157 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us</title>
-    <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - M.E.B</title>
+  <style>
+    :root {
+      --primary-color: #1286ad;
+      --primary-dark: #03242f;
+      --secondary-color: #e9ecef;
+      --background-light: #f8f9fa;
+      --text-dark: #343a40;
+      --text-light: #ffffff;
+      --accent-color: #0aa2d9;
+      --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
 
-        /* Body Styling */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Light background color */
-            color: #333; /* Text color */
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* Navigation Styling */
-        nav {
-            background-color: #1286ad; /* Dark background for the nav */
-            color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            width: 100%;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 60px;
+    }
 
-        .nav-title {
-            font-size: 24px;
-            font-weight: bold;
-        }
+    nav {
+      background-color: #1286ad;
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
 
-        .profile-button {
-            background-color: #444;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
+    .nav-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
 
-        .nav-menu {
-            
-            flex-direction: column;
-            align-items: flex-start;
-        }
+    .nav-title a {
+      color: white;
+      text-decoration: none;
+    }
 
-        .nav-menu a {
-            display: inline;
-            text-decoration: none;
-            color: white;
-            padding: 10px;
-            width: 150px;
-            text-align: center;
-        }
+    .nav-menu {
+      display: flex;
+      gap: 20px;
+    }
 
-        .nav-menu a:hover {
-            background-color: #555;
-        }
+    .nav-menu a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
 
-        .profile-button:hover {
-            background-color: #555;
-        }
+    .nav-menu a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
 
-        
-        .main-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #fff; /* White background for the main content */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    .nav-menu .btn-login {
+      background-color: white;
+      color: #1286ad;
+      font-weight: bold;
+    }
 
-        
-        .content-container {
-            text-align: center;
-        }
+    .nav-menu .btn-login:hover {
+      background-color: #f0f0f0;
+    }
 
-        .content-container h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            color: #333;
-        }
+    .main-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
 
-        .content-container p {
-            font-size: 18px;
-            line-height: 1.6;
-            color: #555;
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    .content-container {
+      text-align: center;
+    }
 
-        .content-container strong {
-            color: #333;
-        }
+    .content-container h1 {
+      font-size: 36px;
+      margin-bottom: 30px;
+      color: #1286ad;
+    }
 
-        
-        .footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
+    .contact-info {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: left;
+      background: #f9f9f9;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 
-    
-        @media screen and (max-width: 768px) {
-            nav {
-                flex-direction: column;
-            }
+    .contact-item {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
 
-            .nav-menu {
-                display: flex;
-                margin-top: 10px;
-            }
+    .contact-icon {
+      font-size: 24px;
+      margin-right: 15px;
+      color: #1286ad;
+      width: 40px;
+      text-align: center;
+    }
 
-            .profile-button {
-                margin-bottom: 10px;
-            }
-        }
-    </style>
+    .contact-text {
+      flex: 1;
+    }
+
+    .contact-text strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .footer {
+      background-color: var(--text-dark);
+      color: var(--text-light);
+      width: 100%;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 40px 20px;
+    }
+
+    .footer-column {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .footer-column h4 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      color: var(--text-light);
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .footer-column h4::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50px;
+      height: 2px;
+      background-color: var(--accent-color);
+    }
+
+    .footer-column p, .footer-column a {
+      margin-bottom: 12px;
+      display: block;
+      color: #adb5bd;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-column a:hover {
+      color: var(--accent-color);
+    }
+
+    .footer-bottom {
+      padding: 15px;
+      background-color: #212529;
+      font-size: 0.9rem;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    @media screen and (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+      }
+
+      .nav-menu {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .main-container {
+        margin: 20px 15px;
+        padding: 20px;
+      }
+
+      .content-container h1 {
+        font-size: 28px;
+      }
+
+      .contact-info {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <nav>
-        
-            <div class="nav-title">M.E.B</div>
-            <div class="nav-menu" id="navMenu">
-                <a href="{% url 'account:home' %}">Home</a>
-                <a href="{% url 'account:about' %}">About Us</a>
-                <a href="{% url 'account:contact' %}">Contact Us</a>
-                <a href="{% url 'account:logout' %}">Log Out</a>
-            </div>
-    </nav>
-    
+  <nav>
+    <div class="nav-title"><a href="{% url 'account:home' %}">M.E.B</a></div>
+    <div class="nav-menu" id="navMenu">
+      <a href="{% url 'account:about' %}">About Us</a>
+      <a href="{% url 'account:contact' %}">Contact Us</a>
+      <a href="{% url 'account:home' %}" class="btn-login">Home</a>
+    </div>
+  </nav>
 
-    <div class="main-container">
-        <div class="content-container">
-            <h1>Contact Us</h1>
-            <p>If you have any questions or concerns, feel free to reach out to us at:</p>
-            <p><strong>Email:</strong> support@meb.com</p>
-            <p><strong>Phone:</strong> +27 80 000 6541</p>
-            <p><strong>Address:</strong> 123 Ruth first, Pretoria , Gauteng</p>
+  <div class="main-container">
+    <div class="content-container">
+      <h1>Contact Us</h1>
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-text">
+            <strong>Email:</strong>
+            <a href="mailto:support@meb-system.com">support@meb.com</a>
+          </div>
         </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div class="contact-text">
+            <strong>Phone:</strong>
+            <a href="tel:+276351388666">+27 (635) 138-8666</a>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-text">
+            <strong>Address:</strong>
+            2 Aubrey Matlakala St, Pretoria
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-column">
+        <h4>Contact Us</h4>
+        <p><i class="bi bi-envelope"></i> <a href="mailto:support@meb-system.com">support@meb-system.com</a></p>
+        <p><i class="bi bi-telephone"></i> <a href="tel:+276351388666">+27 (635) 138-8666</a></p>
+        <p><i class="bi bi-geo-alt"></i> 2 Aubrey Matlakala St, Pretoria</p>
+      </div>
+
+      <div class="footer-column">
+        <h4>Quick Links</h4>
+        <a href="{% url 'account:about' %}"><i class="bi bi-info-circle"></i> About Us</a>
+        <a href="{% url 'account:contact' %}"><i class="bi bi-headset"></i> Contact Us</a>
+        <a href="#"><i class="bi bi-shield-lock"></i> Privacy Policy</a>
+      </div>
+
+      <div class="footer-column">
+        <h4>M.E.B System</h4>
+        <p>A comprehensive platform designed to enhance student life through seamless access to campus resources and services.</p>
+      </div>
     </div>
 
-    <footer class="footer">&copy; 2025 M.E.B. All Rights Reserved.</footer>
-
-    
+    <div class="footer-bottom">
+      &copy; 2025 M.E.B. All Rights Reserved.
+    </div>
+  </footer>
+</body>
+</html>

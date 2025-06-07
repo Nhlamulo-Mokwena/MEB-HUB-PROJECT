@@ -1,60 +1,131 @@
-{%load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Navigator</title>
+    <title>University Navigator | M.E.B</title>
     <style>
-    
+        :root {
+            --primary-color: #1286ad;
+            --primary-dark: #03242f;
+            --secondary-color: #e9ecef;
+            --background-light: #f8f9fa;
+            --text-dark: #343a40;
+            --text-light: #ffffff;
+            --accent-color: #0aa2d9;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
             font-family: 'Arial', sans-serif;
             background-color: white;
             color: #333;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
         
+        /* Navigation */
         nav {
-            background-color: #1286ad;
-            padding: 15px;
-            text-align: center;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav ul li {
-            display: inline;
-            margin: 0 20px;
-        }
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-        nav ul li a:hover {
-            color: #f0f0f0;
+            background-color: var(--primary-color);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
         }
         
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo a {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 20px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+        
+        .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .nav-btn {
+            padding: 8px 15px;
+            background-color: white;
+            color: var(--primary-color) !important;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .nav-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+        }
+        
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Hero Section */
         .hero {
             position: relative;
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
             background-image: url("{% static 'assets/images/tut3.jpg' %}");
             background-position: center;
             background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 100px 20px 80px;
         }
+        
         .hero-overlay {
             position: absolute;
             top: 0;
@@ -63,46 +134,193 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
         }
+        
         .hero-content {
             position: relative;
             text-align: center;
             color: white;
             z-index: 1;
+            padding: 0 20px;
+            max-width: 800px;
         }
+        
         .hero-content h1 {
-            font-size: 4rem;
+            font-size: clamp(2.5rem, 5vw, 4rem);
             margin-bottom: 20px;
             animation: fadeIn 2s ease-out;
+            line-height: 1.2;
         }
+        
         .hero-content p {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
             margin-bottom: 30px;
             animation: fadeIn 2s ease-out 0.5s;
         }
-        .hero-content .btn {
-            padding: 15px 25px;
-            background-color: #1286ad;
+        
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            animation: fadeIn 2s ease-out 1s;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            max-width: 200px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin: 0 10px;
-            animation: fadeIn 2s ease-out 1s;
-        }
-        .hero-content .btn:hover {
-            background-color: #03242f;
         }
         
-        footer {
-            background-color: #343a40;
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
             color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
+            border: 2px solid white;
         }
         
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 60px 20px;
+            background: var(--background-light);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: clamp(2rem, 3vw, 2.5rem);
+            color: var(--primary-color);
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+        
+        .feature-card p {
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--text-dark);
+            color: var(--text-light);
+            width: 100%;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 40px 20px;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+            text-align: left;
+            padding: 0 15px;
+        }
+        
+        .footer-column h4 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+        
+        .footer-column p, .footer-column a {
+            margin-bottom: 12px;
+            display: block;
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column a:hover {
+            color: var(--accent-color);
+        }
+        
+        .footer-bottom {
+            padding: 15px;
+            background-color: #212529;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        /* Animations */
         @keyframes fadeIn {
             0% {
                 opacity: 0;
@@ -114,61 +332,219 @@
             }
         }
         
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .nav-links li {
+                margin-left: 15px;
             }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: calc(100vh - 70px);
+                background-color: var(--primary-dark);
+                flex-direction: column;
+                align-items: center;
+                padding: 40px 20px;
+                transition: all 0.3s ease;
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .nav-links li {
+                margin: 15px 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .nav-links a {
+                width: 100%;
+                padding: 12px;
+                display: block;
+            }
+            
+            .hero {
+                padding: 80px 20px;
+                height: auto;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                max-width: 250px;
+                width: 100%;
+            }
+            
+            .features-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-column {
+                min-width: 100%;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            
+            .footer-column h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
             .hero-content p {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+            }
+            
+            .nav-container {
+                padding: 0 15px;
+            }
+            
+            .logo a {
+                font-size: 1.3rem;
             }
         }
     </style>
 </head>
 <body>
-
     <!-- Navigation Bar -->
     <nav>
-        <ul>
-            <li><a href="{% url 'account:about' %}">About Us</a></li>
-            <li><a href="{% url 'account:contact' %}">Contact Us</a></li>
-            <li><a href="">Features</a></li>
-        </ul>
+        <div class="nav-container">
+            <div class="logo">
+                <a href="#">M.E.B</a>
+            </div>
+            
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <ul class="nav-links" id="nav-links">
+                <li><a href="{% url 'account:landing_about' %}">About Us</a></li>
+                <li><a href="{% url 'account:landing_contact' %}">Contact</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="{% url 'account:login' %}" class="nav-btn">Login</a></li>
+            </ul>
+        </div>
     </nav>
 
-    <!-- Hero Image Section -->
+    <!-- Hero Section -->
     <div class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1>Welcome to M.E.B</h1>
             <p>Your ultimate campus companion!</p>
-            <a href="{%url 'account:register' %}"><button class="btn">Sign up</button></a>
-            <a href="{%url 'account:login' %}"><button class="btn">Log In</button></a>
+            <div class="hero-btns">
+                <a href="{% url 'account:register' %}" class="btn btn-primary">Sign up</a>
+                <a href="{% url 'account:login' %}" class="btn btn-secondary">Log In</a>
+            </div>
         </div>
     </div>
 
-    <!-- Footer -->
- <footer class="footer">
-  <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; padding: 20px;">
-    <div style="flex: 1; min-width: 250px; margin-bottom: 15px;">
-      <h4 style="margin-bottom: 10px;">Contact Us</h4>
-      <p>Email: <a href="mailto:support@meb-system.com" style="color: rgb(7, 201, 255); text-decoration: none;">support@meb-system.com</a></p>
-      <p>Phone: <a href="tel:+1234567890" style="color:rgb(7, 201, 255) rgb(7, 201, 255); text-decoration: none;">+1 (234) 567-890</a></p>
-    </div>
-    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
-      <h4 style="margin-bottom: 10px;">Quick Links</h4>
-      <p><a href="{% url 'account:about' %}" style="color:rgb(7, 201, 255); text-decoration: none;">About Us</a></p>
-      <p><a href="{% url 'account:contact' %}" style="color: rgb(7, 201, 255); text-decoration: none;">Contact Us</a></p>
-      <p><a href="#" style="color: rgb(7, 201, 255); text-decoration: none;">Privacy Policy</a></p>
-    </div>
-    <div style="flex: 1; min-width: 250px; margin-bottom: 15px;">
-      <h4 style="margin-bottom: 10px;">M.E.B System</h4>
-      <p>Empowering students to explore, connect, and navigate campus life effortlessly.</p>
-    </div>
-  </div>
-  <div style="text-align: center; padding: 10px; background-color: #212529; font-size: 0.9rem;">
-    &copy; 2025 M.E.B. All Rights Reserved.
-  </div>
-</footer>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Key Features</h2>
+        <div class="features-container">
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3 class="feature-title">Campus Navigation</h3>
+                <p>Find your way around campus with interactive maps and real-time directions to classrooms, offices, and facilities.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎉</div>
+                <h3 class="feature-title">Upcoming Events</h3>
+                <p>Discover upcoming campus events, workshops, and activities tailored for students—all in one convenient place.</p>
+            </div>
 
+            <div class="feature-card">
+                <div class="feature-icon">🚌</div>
+                <h3 class="feature-title">Campus Bus Schedules</h3>
+                <p>Stay on time with easy access to real-time campus bus schedules. Plan your commute and never miss a ride again.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>Contact Us</h4>
+                <p><a href="mailto:support@meb-system.com">support@meb-system.com</a></p>
+                <p><a href="tel:+27635138866">+27 (635) 138-8666</a></p>
+                <p>2 Aubrey Matlakala St, Pretoria</p>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <a href="{% url 'account:landing_about' %}">About Us</a>
+                <a href="{% url 'account:landing_contact' %}">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            
+            <div class="footer-column">
+                <h4>M.E.B System</h4>
+                <p>A comprehensive platform designed to enhance student life through seamless access to campus resources and services.</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            &copy; 2025 M.E.B. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+        
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>

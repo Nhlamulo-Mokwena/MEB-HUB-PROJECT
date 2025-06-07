@@ -5,46 +5,107 @@
     <title>Analytics</title>
     <link rel="stylesheet" href="/static/assets/styles/admin1.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .report-instruction {
-             text-align: center;
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #555;
+
+        p{
+        padding-top: 30px;
+        color: #1286ad;
+        font-size: 20px;
+      }
+
+      h2{
+        margin-top:50px;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        text-align: center;
+        text-decoration: underline;
+        color:#1286ad ;
+      }
+
+
+        .chart-section {
+            margin-bottom: 50px;  /* Space between chart sections */
         }
 
-        .report-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+       .chart-container {
+        display: flex;
+        justify-content: center;
+        margin: 0 auto;
+        max-width: 800px;
+      }
+
+      canvas {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 1rem;
+        height: 300px; /* Reduced from your original 400px */
+        width: 100% !important; /* Ensures responsiveness */
+     }
+
+      .chart-title {
+            text-align: center;
+            color: #1286ad;
+            margin: 30px 0 20px 0;
+            font-size: 1.5rem;
         }
 
-        .btn-report {
-            background-color: #1286ad;
-            padding: 14px 26px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-        }
 
-        .btn-report i {
-            font-size: 20px;
-        }
+    .chart-and-summary {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+        align-items: flex-start;
+    }
 
-        .btn-report:hover {
-            background-color: #0f5f7e;
-            transform: scale(1.05);
-        }
+    .summary-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 20px;
+        width: 200px;
+    }
 
+    .summary-card h4 {
+        color: var(--primary);
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+
+    .summary-item span:last-child {
+        font-weight: bold;
+        color: var(--primary-dark);
+    }
+
+    hr {
+        border: none;
+        height: 2px;
+        background: linear-gradient(to right, #1286ad, #7dd3fc, #1286ad);
+        margin: 45px auto;
+        width: 80%;
+        border-radius: 5px;
+    }
+
+    .sub-heading {
+        text-align: center;
+        background-color:  #1286ad;
+        color: white;
+        padding: 10px;
+        margin: 0;
+        width:100%;
+        text-decoration: none;
+    }
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -88,23 +149,284 @@
              <h1>Analytics</h1>
          </div>
 
-        <div class="report-instruction">
-            <p>Click below to access available reports:</p>
+        <!--Bus graphs -->
+        <div class="header">
+            <h2 class="sub-heading">Bus schedule Trends</h2>
         </div>
-        <div class="report-buttons">
-            <a href="{% url 'full_report' %}" class="btn-report">
-                <i class="bi bi-graph-up-arrow"></i> System Overview Report
-            </a>
-            <a href="{% url 'student_report' %}" class="btn-report">
-                <i class="bi bi-person-lines-fill"></i> Student Report
-            </a>
-            <a href="{% url 'bus_schedule_stats' %}" class="btn-report">
-                <i class="bi bi-bus-front"></i> Bus statistics
-            </a>
-            <a href="{% url 'events_stats' %}" class="btn-report">
-                <i class="bi bi-calendar-event"></i> Events statistics
-            </a>
+        <p><strong>Total Schedule Views:</strong> {{ total_views }}</p>
+
+        {% if most_viewed %}
+        <p><strong>Most Viewed:</strong>
+            {{ most_viewed.schedule_code__schedule_code }} -
+            {{ most_viewed.schedule_code__campus1 }} and
+            {{ most_viewed.schedule_code__campus2 }}
+            ({{ most_viewed.view_count }} views)
+        </p>
+        {% endif %}
+        <div class="chart-section">
+            <h2>Views Per Schedule Code</h2>
+            <div class="chart-container">
+                <canvas id="viewsBySchedule"></canvas>
+            </div>
         </div>
+        <div class="chart-section">
+            <h2>Views Over Time</h2>
+            <div class="chart-container">
+                <canvas id="viewsByDay"></canvas>
+            </div>
+        </div>
+        <div class="chart-section">
+            <h2>Views in Last 7 Days</h2>
+        <div class="chart-container">
+            <canvas id="viewsLast7Days"></canvas>
+            </div>
+        </div>
+
+        <!--Events graphs -->
+         <div class="header">
+          <h2 class="sub-heading">Events Trends</h2>
+        </div>
+          <div class="chart-section">
+             <h2 class="chart-title">Number of RSVPs This Week</h2>
+            <div class="chart-container">
+                <canvas id="attendeesChart" ></canvas>
+                <div class="summary-card">
+                    <h4>Weekly Summary</h4>
+                <div class="summary-item">
+                    <span>Total RSVPs:</span>
+                    <span id="total-attendees">{{total_attendees}}</span>
+                </div>
+                </div>
+            </div>
+          </div>
+          <div class="chart-section">
+              <h2 class="chart-title">Number of RSVPs of each event this month</h2>
+            <div class="chart-container">
+              <canvas id="eventsBarChart" ></canvas>
+            </div>
+          </div>
+
+        <!--User graphs -->
+        <div class="header">
+            <h2 class="sub-heading">User Trends</h2>
+        </div>
+
+        <div class="chart-section">
+            <h2 class="chart-title">Weekly Active Users</h2>
+            <div class="chart-container">
+              <canvas id="wauChart" ></canvas>
+            </div>
+        </div>
+         <!--Bus javascript -->
+    <script>
+      // Function to create the charts
+      function createChart(id, labels, data, label, type = 'bar') {
+          new Chart(document.getElementById(id), {
+              type: type,
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: label,
+                      data: data,
+                      backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      borderWidth: 2
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: { precision: 0 }
+                      }
+                  }
+              }
+          });
+      }
+
+      // Views per schedule (Bar chart)
+      const scheduleLabels = [
+          {% for label, count in views_per_schedule %}
+              "{{ label }}",
+          {% endfor %}
+      ];
+
+      const scheduleData = [
+          {% for label, count in views_per_schedule %}
+              {{ count }},
+          {% endfor %}
+      ];
+
+      // Debugging output
+      console.log('Schedule Labels:', scheduleLabels);
+      console.log('Schedule Data:', scheduleData);
+
+      createChart('viewsBySchedule', scheduleLabels, scheduleData, 'Views per Schedule');
+
+      // Views by day (Line chart)
+      const dayLabels = [
+          {% for date, count in views_by_day %}
+              "{{ date }}",
+          {% endfor %}
+      ];
+
+      const dayData = [
+          {% for date, count in views_by_day %}
+              {{ count }},
+          {% endfor %}
+      ];
+
+      // Debugging output
+      console.log('Day Labels:', dayLabels);
+      console.log('Day Data:', dayData);
+
+      createChart('viewsByDay', dayLabels, dayData, 'Views by Day', 'line');
+
+      // Views in the last 7 days (Line chart)
+      const recentLabels = [
+          {% for date, count in recent_views %}
+              "{{ date }}",
+          {% endfor %}
+      ];
+
+      const recentData = [
+          {% for date, count in recent_views %}
+              {{ count }},
+          {% endfor %}
+      ];
+
+      // Debugging output
+      console.log('Recent Labels:', recentLabels);
+      console.log('Recent Data:', recentData);
+
+      createChart('viewsLast7Days', recentLabels, recentData, 'Last 7 Days', 'line');
+  </script>
+        <!--Events javascript -->
+  <script>
+    const ctx = document.getElementById('attendeesChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+            label: 'RSVPs per Day',
+            data: {{ data|safe }},
+            borderColor: 'rgba(75, 192, 192, 1)',
+            fill: false
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                title: { display: true, text: 'Date' }
+            },
+            y: {
+                title: { display: true, text: 'Number of RSVPs' },
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 5,
+                    precision: 0  // Ensure whole numbers
+                }
+            }
+        }
+    }
+});
+
+
+     // Bar Chart - Using a different variable name
+            const barCtx = document.getElementById('eventsBarChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: {{ event_names|safe }},
+                    datasets: [{
+                        label: 'RSVPs for Events This Month',
+                        data: {{ rsvp_counts|safe }},
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 5,
+                                precision: 0
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+</script>
+        <!-- User javascript -->
+       <script>
+
+  const wauLabels = {{ wau_labels|safe }};
+  const wauCounts = {{ wau_counts|safe }};
+
+
+
+  const createLineChart = (ctxId, labels, data, label) => {
+    const ctx = document.getElementById(ctxId).getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: label,
+          data: data,
+          borderColor: 'rgba(18, 134, 173, 0.8)',
+          backgroundColor: 'rgba(18, 134, 173, 0.2)',
+          tension: 0.3,
+          fill: true,
+          pointRadius: 3,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Active Users'
+            },
+            ticks: {
+               stepSize: 1,
+               precision: 0  // Ensure whole numbers
+            }
+          }
+        }
+      }
+    });
+  };
+
+
+  createLineChart("wauChart", wauLabels, wauCounts, "Weekly Active Users");
+</script>
+
     </div>
 </div>
 </body>

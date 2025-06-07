@@ -1,0 +1,75 @@
+
+{% extends 'buses/master.html' %}
+{% load static %}
+{% block title %}Bus Status {% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'assets/styles/bus_status.css' %}">
+{% endblock %}
+
+{% block content %}
+<nav>
+    <div class="nav-title">M.E.B</div>
+    <button class="profile-button" onclick="toggleMenu()">
+      <span id="user-initials">{{ initials }}</span>
+    </button>
+    <div class="nav-menu" id="navMenu">
+      <a href="#"><i class="bi bi-person-circle"></i> Profile</a>
+      <a href="{% url 'account:about' %}"><i class="bi bi-info-circle-fill"></i> About Us</a>
+      <a href="{% url 'account:contact' %}"><i class="bi bi-envelope-fill"></i> Contact Us</a>
+      <a href="{% url 'account:logout' %}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+    </div>
+  </nav>
+<main>
+<div>
+	<span><a href="{% url 'account:home' %}">Home</a> | </span>
+</div>
+<div class="card">
+	<div class="card-content">
+		<p style="font-size: 25px">Status</p>
+		{% if status %}
+			<img src="{% static 'assets\images\Bus UnProhibited Sign.jpg' %}" alt="registered">
+			<p style="padding: 25px">The student is registered</p>
+		{% else %}
+			<img src="{% static 'assets\images\Bus Prohibition Sign.JPG' %}" alt="not registered">
+			<p style="padding: 25px">The student is not registered</p>
+
+			<div class="upload-form" style="max-height: 6em; margin-top: 10px;">
+					<form method="post" enctype="multipart/form-data" action="{% url 'upload_img' %}">
+						{% csrf_token %}
+						<!--{{ confirmation_form.as_p }}-->
+						{{ confirmation_form.document }}
+						<button type="submit" class="btn-small" style="padding: 2px 8px; font-size: 12px;">
+							Upload
+						</button>
+					</form>
+			</div>
+		{% endif %}
+		{% if messages %}
+		<div id="messages">
+  			{% for message in messages %}
+				<div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+				  {{ message }}
+				</div>
+  			{% endfor %}
+		</div>
+		{% endif %}
+	</div>
+</div>
+</main>
+<footer class="footer">&copy; 2025 M.E.B. All Rights Reserved.</footer>
+
+
+  <script>
+    function toggleMenu() {
+
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+	  setTimeout(() => {
+	  	const box = document.getElementById("messages");
+	  	if(box){
+	  		box.style.opacity = '0';
+	  		setTimeout(() => box.remove(), 600);
+	  	}
+	  }, 5000);
+  </script>
+{% endblock %}

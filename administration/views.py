@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
-from login.models import Campus,Admin,Student
+from login.models import Campus, Admin, Student, RegisteredStudent
 from bus.models import ScheduleCode,Bus_schedule,Bus,Bus_Stats
 from .models import Admin_Action
 from events.models import RSVP
+from django.urls import reverse
+from django.contrib import messages
 from django.http import HttpResponseRedirect,HttpResponse
 from datetime import datetime,timedelta
 from datetime import date
@@ -22,6 +24,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from django.db.models import Sum
 import json
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
+from django.utils.safestring import mark_safe
 
 
 # Create your views here.
@@ -58,59 +62,91 @@ def add_all_campuses_view(request):
     "list": list,"initials":initials
   })
   
-def add_bus_schedule(request,code):
-  
-  schedule_c = ScheduleCode.objects.all().get(schedule_code=code)
-  bus_list = Bus.objects.all()
-  initials = request.session.get("initials")
-  
-  if request.method == 'POST':
+from datetime import datetime, timedelta
+from django.shortcuts import get_object_or_404
 
+def add_bus_schedule(request, code):
+    schedule_c = ScheduleCode.objects.get(schedule_code=code)
+    bus_list = Bus.objects.all()
+    initials = request.session.get("initials")
 
-    bus = Bus.objects.all().get(bus_id=int(request.POST['bus']))
-    start_time = request.POST['start_time']
-    last_time = request.POST['last_time']
-    duration = int(request.POST['duration'])
-      
-    s_time = datetime.strptime(start_time, '%H:%M')
-    l_time = datetime.strptime(last_time, '%H:%M')
-    
-    Bus_schedule.objects.filter(schedule_code=code).delete()
-    
-    n_time = datetime.strptime(start_time, '%H:%M')
-      
-    while n_time < l_time:
-      
-      n_time = s_time + timedelta(hours=duration)
-      
-      bus_s = Bus_schedule(departure=schedule_c.campus1,destination=schedule_c.campus2,
-                             departure_time=s_time.time(),arrival_time=n_time.time(),duration=duration,
-                             bus_id=bus,schedule_code=schedule_c)
-        
-      bus_s.save()
-        
-      s_time = n_time + timedelta(hours=duration)
-      n_time = s_time + timedelta(hours=duration)
-      
-      if n_time > l_time:
-        break
-  
-      bus_s = Bus_schedule(departure=schedule_c.campus2,destination=schedule_c.campus1,
-                        departure_time=s_time.time(),arrival_time=n_time.time(),duration=duration,
-                        bus_id=bus,schedule_code=schedule_c)
-      bus_s.save()
-        
-      s_time = n_time + timedelta(hours=duration)
-        
-    admin = Admin.objects.all().get(admin_id=request.session['admin_id'])
-    addAction(admin_id=admin,record_type="Generated bus schedule",icon="bi bi-bus-front")
-    return HttpResponseRedirect(redirect_to='/administration/bus_menu')
-      
-  else:
-    return render(request,"admin/buses/add_schedule.html",{
-      "schedule": schedule_c,
-      "bus_list": bus_list,"initials":initials
+    if request.method == 'POST':
+        try:
+            bus = Bus.objects.get(bus_id=int(request.POST['bus']))
+            start_time = request.POST['start_time']  # e.g., '13:45'
+            last_time = request.POST['last_time']    # e.g., '14:30'
+
+            s_time = datetime.strptime(start_time, '%H:%M')
+            l_time = datetime.strptime(last_time, '%H:%M')
+
+            if s_time >= l_time:
+                return render(request, "admin/buses/add_schedule.html", {
+                    "schedule": schedule_c,
+                    "bus_list": bus_list,
+                    "initials": initials,
+                    "error": "Start time must be earlier than end time."
+                })
+
+            duration_delta = int((l_time - s_time).total_seconds() / 60)
+            current_time = s_time
+
+            while True:
+                next_time = current_time + timedelta(minutes=duration_delta)
+
+                if next_time > l_time:
+                    break
+
+                # Campus1 -> Campus2
+                Bus_schedule.objects.create(
+                    departure=schedule_c.campus1,
+                    destination=schedule_c.campus2,
+                    departure_time=current_time.time(),
+                    arrival_time=next_time.time(),
+                    duration=duration_delta,
+                    bus_id=bus,
+                    schedule_code=schedule_c
+                )
+
+                # Return trip
+                return_departure = next_time
+                return_arrival = return_departure + timedelta(minutes=duration_delta)
+
+                if return_arrival > l_time:
+                    break
+
+                Bus_schedule.objects.create(
+                    departure=schedule_c.campus2,
+                    destination=schedule_c.campus1,
+                    departure_time=return_departure.time(),
+                    arrival_time=return_arrival.time(),
+                    duration=duration_delta,
+                    bus_id=bus,
+                    schedule_code=schedule_c
+                )
+
+                # Move to the next cycle
+                current_time = return_arrival
+
+            # Log admin action
+            admin = Admin.objects.get(admin_id=request.session['admin_id'])
+            addAction(admin_id=admin, record_type="Generated bus schedule", icon="bi bi-bus-front")
+
+            return HttpResponseRedirect('/administration/bus_menu')
+
+        except Exception as e:
+            return render(request, "admin/buses/add_schedule.html", {
+                "schedule": schedule_c,
+                "bus_list": bus_list,
+                "initials": initials,
+                "error": str(e)
+            })
+
+    return render(request, "admin/buses/add_schedule.html", {
+        "schedule": schedule_c,
+        "bus_list": bus_list,
+        "initials": initials
     })
+
   
 def events_menu(request):
   expired_events = Event.objects.filter(date__lt=date.today()) #automatically delete events
@@ -341,6 +377,15 @@ def user_management(request):
     student = None
     studentEmail = request.GET.get('studentEmail')  # from URL or form
 
+    campuses = Campus.objects.all()
+    campus_id=request.GET.get('campus_id')
+    if campus_id:
+        registered_students = RegisteredStudent.objects.filter(campus_id=campus_id)
+        student_numbers = registered_students.values_list('studentNumber', flat=True)
+        students = students.filter(studentNumber__in=student_numbers)
+
+
+
     if studentEmail:
       try:
         student = Student.objects.get(studentEmail=studentEmail)
@@ -352,16 +397,34 @@ def user_management(request):
       'initials':initials,
       'campus_counts':campus_counts,
       'recent_students':recent_students,
-      'student':student
+      'student':student,
+      'campuses': campuses,
+      'students':students
     }
     return render(request,'admin/user_management.html',context)
 
 def analytics(request):
     initials=request.session.get("initials")
-    return render(request,'admin/analytics.html',{'initials':initials})
+
+    # Get initials from session
+    initials = request.session.get("initials")
+
+    # Get both stats
+    bus_stats = bus_schedule_stats()
+    event_stats = events_stats()
+    user_activity_data = get_user_activity_data()
+
+    context = {
+        **bus_stats,
+        **event_stats,
+        **user_activity_data,
+        "initials": initials
+    }
+
+    return render(request,'admin/analytics.html',context)
       
   
-def bus_schedule_stats(request):
+def bus_schedule_stats():
   total_views = Bus_Stats.objects.count()
 
   # Views per schedule
@@ -395,7 +458,6 @@ def bus_schedule_stats(request):
   recent_labels = [item['date'] for item in recent_views]
   recent_counts = [item['count'] for item in recent_views]
 
-  initials = request.session.get("initials")
 
 
   context = {
@@ -404,10 +466,9 @@ def bus_schedule_stats(request):
     'views_by_day': list(zip(day_labels, day_counts)),
     'recent_views': list(zip(recent_labels, recent_counts)),
     'most_viewed': views_per_schedule[0] if views_per_schedule else None,
-    'initials':initials
   }
 
-  return render(request, 'admin/buses/schedule_stats.html', context)
+  return context
 
 
 def student_report(request):
@@ -724,26 +785,29 @@ def full_report_csv(request):
 
   return response
 
-def events_stats(request):
-  initials=request.session.get("initials")
+def events_stats():
 
   #line graph values
   today = date.today()
-  dates = [today + timedelta(days=i) for i in range(7)]  # Next 7 days
-  labels = [d.strftime("%Y-%m-%d") for d in dates]
+  start_of_week = today - timedelta(days=today.weekday())  # Monday
+  end_of_week = start_of_week + timedelta(days=6)  # Sunday
 
-  rsvp_counts = (RSVP.objects
-                 .annotate(day=TruncDate('done_at'))  # Replace 'timestamp' with your RSVP model datetime field
-                 .values('day')
-                 .annotate(count=Count('id'))
-                 .order_by('day'))
-  # Convert queryset to a dictionary {date: count}
+  week_dates = [start_of_week + timedelta(days=i) for i in range(7)]
+  labels = [d.strftime("%Y-%m-%d") for d in week_dates]
+
+  rsvp_counts = (
+      RSVP.objects
+      .filter(done_at__date__gte=start_of_week, done_at__date__lte=end_of_week)
+      .annotate(day=TruncDate('done_at'))
+      .values('day')
+      .annotate(count=Count('id'))
+      .order_by('day')
+  )
+
   rsvp_data = {entry['day']: entry['count'] for entry in rsvp_counts}
+  data = [rsvp_data.get(d, 0) for d in week_dates]
 
-  # Fill data list in correct order
-  data = [rsvp_data.get(d, 0) for d in dates]
-  end_date=today + timedelta(days=7)
-  total_attendees = RSVP.objects.filter(done_at__date__gte=today,done_at__date__lte=end_date).count()
+  total_attendees = RSVP.objects.filter(done_at__date__gte=start_of_week, done_at__date__lte=end_of_week).count()
 
   #bar graph values
   today = now().date()
@@ -761,12 +825,11 @@ def events_stats(request):
   context = {
     'labels': labels,
     'data': data,
-    'initials':initials,
     'total_attendees':total_attendees,
     'event_names': json.dumps(event_names),  # Convert to JSON
     'rsvp_counts': json.dumps(rsvp_counts),
   }
-  return render(request,"admin/events/events_stats.html",context)
+  return context
 
 def download_student_details_pdf(request):
   studentEmail=request.GET.get('studentEmail')
@@ -826,3 +889,19 @@ def download_student_details_csv(request):
   ])
 
   return response
+
+def get_user_activity_data():
+    now = timezone.now()
+
+
+    # Weekly Active Users (last 8 weeks)
+    wau = Student.objects.filter(login_time__gte=now - timezone.timedelta(weeks=8)) \
+        .annotate(week=TruncWeek('login_time')) \
+        .values('week') \
+        .annotate(count=Count('studentNumber')) \
+        .order_by('week')
+
+    return {
+        'wau_labels': mark_safe(json.dumps([item['week'].strftime('%Y-%m-%d') for item in wau])),
+        'wau_counts': mark_safe(json.dumps([item['count'] for item in wau])),
+    }
