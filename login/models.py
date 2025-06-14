@@ -24,6 +24,7 @@ class Student(models.Model):
         campus_id = models.ForeignKey(Campus,on_delete=models.CASCADE)
         login_time = models.DateTimeField(default=timezone.now)
 
+
 def __str__(self):
         return f"{self.studentNumber} {self.name} {self.surname}"
 

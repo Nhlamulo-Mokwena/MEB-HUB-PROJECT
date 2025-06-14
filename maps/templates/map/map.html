@@ -1,0 +1,836 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>University Campus Map</title>
+    <link rel="stylesheet" href="{% static 'assets/styles/bus_home.css' %}">
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #sidebar {
+            position: absolute;
+            left: 10px;
+            top: 70px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            width: 280px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #sidebar h2 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+        #search {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        #search:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+            background: white;
+        }
+        #location-list {
+            display: none; /* Hidden by default */
+        }
+        .location-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .location-item:hover {
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+        .location-item:last-child {
+            border-bottom: none;
+        }
+        .location-icon {
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            flex-shrink: 0;
+        }
+        .info-window {
+            max-width: 300px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .info-window img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        .info-window h3 {
+            margin: 0 0 10px 0;
+            color: #1a73e8;
+            font-size: 18px;
+        }
+        .info-window p {
+            margin: 8px 0;
+            line-height: 1.4;
+            color: #555;
+        }
+        .info-window button {
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+        .info-window button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.4);
+        }
+        #controls {
+            position: absolute;
+            right: 10px;
+            top: 70px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            width: 280px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        button {
+            margin: 8px 0;
+            padding: 12px 20px;
+            width: 100%;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        #get-location {
+            background: linear-gradient(135deg, #34a853, #4caf50);
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
+        }
+        #get-location:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 168, 83, 0.4);
+        }
+        #stop-tracking {
+            background: linear-gradient(135deg, #ea4335, #f44336);
+            color: white;
+            box-shadow: 0 2px 8px rgba(234, 67, 53, 0.3);
+        }
+        #stop-tracking:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(234, 67, 53, 0.4);
+        }
+        select {
+            margin: 8px 0;
+            padding: 12px 15px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            background: #f8f9fa;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        select:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+            background: white;
+        }
+        #directions-panel {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(248, 249, 250, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        #directions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        #directions-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+        #clear-directions {
+            background: linear-gradient(135deg, #ea4335, #f44336);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: auto;
+            margin: 0;
+        }
+        #clear-directions:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(234, 67, 53, 0.4);
+        }
+        .distance-info {
+            font-weight: 600;
+            color: #1a73e8;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: rgba(26, 115, 232, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #1a73e8;
+        }
+        .distance-info span {
+            display: block;
+            margin: 2px 0;
+        }
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1a73e8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Floating notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.warning {
+            background: #ff9800;
+        }
+        .notification.error {
+            background: #f44336;
+        }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #sidebar, #controls {
+                width: 250px;
+            }
+            #sidebar {
+                left: 5px;
+                top: 60px;
+            }
+            #controls {
+                right: 5px;
+                top: 60px;
+            }
+        }
+        @media (max-width: 480px) {
+            #sidebar, #controls {
+                width: calc(100vw - 20px);
+                left: 10px;
+                right: 10px;
+            }
+            #controls {
+                top: auto;
+                bottom: 10px;
+            }
+        }
+        /* Enhanced scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(26, 115, 232, 0.3);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(26, 115, 232, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-title">CAMPUS MAP</div>
+        <div>
+            <ul>
+                <li><a href="{% url 'account:home' %}">Home</a></li>
+                <li><a href="{% url 'account:about' %}">About</a></li>
+                <li><a href="{% url 'account:contact' %}">Contact</a></li>
+            </ul>
+        <div>
+    </nav>
+    
+    <div id="sidebar">
+        <h2>Campus Locations</h2>
+        <input id="search" type="text" placeholder="🔍 Search locations..." />
+        <div id="location-list"></div>
+    </div>
+    
+    <div id="controls">
+        <button id="get-location">Get My Location</button>
+        <button id="stop-tracking">Stop Tracking</button>
+        <select id="travel-mode">
+            <option value="WALKING">🚶 Walking</option>
+            <option value="DRIVING">🚗 Driving</option>
+        </select>
+        <div id="directions-panel">
+            <div id="directions-header">
+                <h3>Directions</h3>
+                <button id="clear-directions">Clear</button>
+            </div>
+            <div class="distance-info" id="distance-info"></div>
+            <div id="adp-directions"></div>
+        </div>
+    </div>
+    
+    <div id="map"></div>
+
+    <script>
+        const iconMap = {
+            building: "https://maps.google.com/mapfiles/kml/pal3/icon21.png",
+            library: "https://maps.google.com/mapfiles/kml/pal3/icon10.png",
+            restaurant: "https://maps.google.com/mapfiles/kml/pal3/icon61.png",
+            music: "https://maps.google.com/mapfiles/kml/pal3/icon7.png",
+            bank: "https://maps.google.com/mapfiles/kml/pal3/icon16.png",
+            "town-hall": "https://maps.google.com/mapfiles/kml/pal3/icon13.png",
+            recreational: "https://maps.google.com/mapfiles/kml/pal3/icon39.png",
+            pitch: "https://maps.google.com/mapfiles/kml/pal3/icon12.png",
+            lodging: "https://maps.google.com/mapfiles/kml/pal3/icon41.png",
+            bus: "https://maps.google.com/mapfiles/kml/pal3/icon27.png",
+        };
+
+        let map;
+        let markers = [];
+        let infoWindow;
+        let userMarker;
+        let directionsService;
+        let directionsRenderer;
+        let watchId = null;
+        let selectedTravelMode = "WALKING";
+        let lastDestination = null;
+        let isTracking = false;
+
+        async function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -25.540769, lng: 28.096378 },
+                zoom: 16,
+                mapTypeId: "hybrid",
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "on" }]
+                    }
+                ],
+                mapTypeControl: true,
+                streetViewControl: true,
+                fullscreenControl: true,
+                zoomControl: true
+            });
+
+            infoWindow = new google.maps.InfoWindow({
+                maxWidth: 300
+            });
+            
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                panel: document.getElementById("adp-directions"),
+                suppressMarkers: false,
+                polylineOptions: {
+                    strokeColor: "#1a73e8",
+                    strokeWeight: 5,
+                    strokeOpacity: 0.8
+                }
+            });
+
+            // Show loading notification
+            showNotification("Loading campus locations...", "info");
+
+            try {
+                const response = await fetch('/maps/api/locations/');
+                if (!response.ok) throw new Error('Failed to fetch locations');
+                const campusData = await response.json();
+
+                campusData.features.forEach((feature) => {
+                    const coords = feature.geometry.coordinates;
+                    const position = { lat: coords[1], lng: coords[0] };
+                    const properties = feature.properties;
+
+                    const marker = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                        title: properties.name,
+                        icon: {
+                            url: iconMap[properties.icon] || iconMap["building"],
+                            scaledSize: new google.maps.Size(32, 32)
+                        },
+                        animation: google.maps.Animation.DROP
+                    });
+
+                    marker.properties = properties;
+                    markers.push(marker);
+
+                    marker.addListener("click", () => {
+                        showInfoWindow(marker);
+                        lastDestination = marker.getPosition();
+                        if (userMarker) {
+                            calculateAndDisplayRoute(userMarker.getPosition(), lastDestination);
+                        }
+                    });
+
+                    addToLocationList(marker);
+                });
+
+                showNotification("Campus locations loaded successfully!", "success");
+            } catch (error) {
+                console.error("Error loading campus data:", error);
+                showNotification("Failed to load campus locations. Please try again later.", "error");
+            }
+
+            // Event listeners
+            document.getElementById("search").addEventListener("input", function() {
+                const searchTerm = this.value.toLowerCase();
+                const locationList = document.getElementById("location-list");
+                
+                if (searchTerm.length > 0) {
+                    locationList.style.display = "block";
+                    filterLocations();
+                } else {
+                    locationList.style.display = "none";
+                    // Show all markers when search is empty
+                    markers.forEach(marker => {
+                        marker.setVisible(true);
+                    });
+                }
+            });
+            
+            document.getElementById("get-location").addEventListener("click", getLocation);
+            document.getElementById("stop-tracking").addEventListener("click", stopTracking);
+            document.getElementById("clear-directions").addEventListener("click", clearDirections);
+            document.getElementById("travel-mode").addEventListener("change", function() {
+                selectedTravelMode = this.value;
+                if (userMarker && lastDestination) {
+                    calculateAndDisplayRoute(userMarker.getPosition(), lastDestination);
+                }
+            });
+
+            // Update tracking button text
+            updateTrackingButton();
+        }
+
+        function showNotification(message, type = "info") {
+            const notification = document.createElement("div");
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add("show"), 100);
+            setTimeout(() => {
+                notification.classList.remove("show");
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        function updateTrackingButton() {
+            const button = document.getElementById("get-location");
+            if (isTracking) {
+                button.innerHTML = "Tracking Location...";
+                button.style.background = "linear-gradient(135deg, #ff9800, #f57c00)";
+            } else {
+                button.innerHTML = "Get My Location";
+                button.style.background = "linear-gradient(135deg, #34a853, #4caf50)";
+            }
+        }
+
+        function showInfoWindow(marker) {
+            const properties = marker.properties;
+            let content = `<div class="info-window"><h3>${properties.name}</h3>`;
+
+            if (properties.image) {
+                content += `<img src="${properties.image}" alt="${properties.name}" loading="lazy">`;
+            }
+
+            content += `<p>${properties.description}</p>`;
+
+            if (userMarker) {
+                content += `<button onclick="calculateAndDisplayRoute(userMarker.getPosition(), {lat: ${marker.getPosition().lat()}, lng: ${marker.getPosition().lng()}})">🗺️ Get Directions</button>`;
+            }
+
+            content += `</div>`;
+
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+        }
+
+        function addToLocationList(marker) {
+            const list = document.getElementById("location-list");
+            const item = document.createElement("div");
+            item.className = "location-item";
+            
+            const iconElement = document.createElement("div");
+            iconElement.className = "location-icon";
+            iconElement.style.backgroundImage = `url(${iconMap[marker.properties.icon] || iconMap["building"]})`;
+            
+            const textElement = document.createElement("span");
+            textElement.textContent = marker.properties.name;
+            
+            item.appendChild(iconElement);
+            item.appendChild(textElement);
+
+            item.addEventListener("click", () => {
+                const destination = marker.getPosition(); 
+                map.panTo(marker.getPosition());
+                map.setZoom(18);
+                showInfoWindow(marker);
+                if (userMarker) {
+                    lastDestination = destination;
+                    calculateAndDisplayRoute(userMarker.getPosition(), marker.getPosition());
+                }
+            });
+
+            list.appendChild(item);
+        }
+
+        function filterLocations() {
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            const items = document.querySelectorAll(".location-item");
+
+            items.forEach((item, index) => {
+                const marker = markers[index];
+                const text = item.textContent.toLowerCase();
+
+                if (text.includes(searchTerm)) {
+                    item.style.display = "flex";
+                    marker.setVisible(true);
+                } else {
+                    item.style.display = "none";
+                    marker.setVisible(false);
+                }
+            });
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                if (watchId) {
+                    stopTracking();
+                    return;
+                }
+
+                isTracking = true;
+                updateTrackingButton();
+                showNotification("Getting high-accuracy GPS location...", "info");
+
+                // Enhanced GPS options for better accuracy
+                const highAccuracyOptions = {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 60000 // Increased timeout for GPS fix
+                };
+
+                const fallbackOptions = {
+                    enableHighAccuracy: false,
+                    maximumAge: 60000, // Allow 1-minute old cached location
+                    timeout: 10000
+                };
+
+                // Try high accuracy first, fallback if needed
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const accuracy = position.coords.accuracy;
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+
+                        // Show accuracy information
+                        let accuracyMessage = `Location found! Accuracy: ±${Math.round(accuracy)}m`;
+                        if (accuracy <= 10) {
+                            accuracyMessage += " (Excellent)";
+                        } else if (accuracy <= 50) {
+                            accuracyMessage += " (Good)";
+                        } else if (accuracy <= 100) {
+                            accuracyMessage += " (Fair)";
+                        } else {
+                            accuracyMessage += " (Poor - consider moving outdoors)";
+                        }
+
+                        showNotification(accuracyMessage, accuracy <= 50 ? "success" : "warning");
+
+                        if (!userMarker) {
+                            userMarker = new google.maps.Marker({
+                                position: userLocation,
+                                map: map,
+                                title: `Your Location (±${Math.round(accuracy)}m accuracy)`,
+                                icon: {
+                                    url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                                    scaledSize: new google.maps.Size(24, 24)
+                                },
+                                animation: google.maps.Animation.BOUNCE
+                            });
+
+                            // Add accuracy circle
+                            const accuracyCircle = new google.maps.Circle({
+                                center: userLocation,
+                                radius: accuracy,
+                                map: map,
+                                fillColor: '#4285f4',
+                                fillOpacity: 0.1,
+                                strokeColor: '#4285f4',
+                                strokeOpacity: 0.3,
+                                strokeWeight: 1
+                            });
+
+                            userMarker.accuracyCircle = accuracyCircle;
+                            setTimeout(() => userMarker.setAnimation(null), 2000);
+                        } else {
+                            userMarker.setPosition(userLocation);
+                            userMarker.setTitle(`Your Location (±${Math.round(accuracy)}m accuracy)`);
+                            if (userMarker.accuracyCircle) {
+                                userMarker.accuracyCircle.setCenter(userLocation);
+                                userMarker.accuracyCircle.setRadius(accuracy);
+                            }
+                        }
+
+                        map.panTo(userLocation);
+
+                        // Enhanced watch position with accuracy filtering
+                        watchId = navigator.geolocation.watchPosition(
+                            (position) => {
+                                const newAccuracy = position.coords.accuracy;
+                                const newLocation = {
+                                    lat: position.coords.latitude,
+                                    lng: position.coords.longitude,
+                                };
+
+                                // Only update if accuracy is reasonable or better than before
+                                if (newAccuracy <= 100) {
+                                    userMarker.setPosition(newLocation);
+                                    userMarker.setTitle(`Your Location (±${Math.round(newAccuracy)}m accuracy)`);
+                                    
+                                    if (userMarker.accuracyCircle) {
+                                        userMarker.accuracyCircle.setCenter(newLocation);
+                                        userMarker.accuracyCircle.setRadius(newAccuracy);
+                                    }
+
+                                    if (lastDestination) {
+                                        calculateAndDisplayRoute(newLocation, lastDestination);
+                                    }
+                                }
+                            },
+                            (error) => {
+                                console.error("Error tracking location:", error);
+                                showNotification("GPS tracking error - trying fallback method", "warning");
+                            },
+                            highAccuracyOptions
+                        );
+                    },
+                    (error) => {
+                        // Fallback to less accurate but faster method
+                        console.log("High accuracy failed, trying fallback...");
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                const userLocation = {
+                                    lat: position.coords.latitude,
+                                    lng: position.coords.longitude,
+                                };
+
+                                if (!userMarker) {
+                                    userMarker = new google.maps.Marker({
+                                        position: userLocation,
+                                        map: map,
+                                        title: "Your Location (Network-based)",
+                                        icon: {
+                                            url: "https://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                                            scaledSize: new google.maps.Size(24, 24)
+                                        }
+                                    });
+                                }
+
+                                map.panTo(userLocation);
+                                showNotification("Location found using network (less accurate)", "warning");
+                            },
+                            (fallbackError) => {
+                                isTracking = false;
+                                updateTrackingButton();
+                                let errorMessage = "Error getting your location: ";
+                                switch(fallbackError.code) {
+                                    case fallbackError.PERMISSION_DENIED:
+                                        errorMessage += "Permission denied. Please enable location access.";
+                                        break;
+                                    case fallbackError.POSITION_UNAVAILABLE:
+                                        errorMessage += "Location unavailable. Try moving outdoors.";
+                                        break;
+                                    case fallbackError.TIMEOUT:
+                                        errorMessage += "Location request timed out. Try again.";
+                                        break;
+                                    default:
+                                        errorMessage += "Unknown error occurred.";
+                                        break;
+                                }
+                                showNotification(errorMessage, "error");
+                            },
+                            fallbackOptions
+                        );
+                    },
+                    highAccuracyOptions
+                );
+            } else {
+                showNotification("Geolocation is not supported by this browser.", "error");
+            }
+        }
+
+        function stopTracking() {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            if (userMarker && userMarker.accuracyCircle) {
+                userMarker.accuracyCircle.setMap(null);
+            }
+            isTracking = false;
+            updateTrackingButton();
+            clearDirections();
+            showNotification("Location tracking stopped.", "info");
+        }
+
+        function clearDirections() {
+            directionsRenderer.setDirections({routes: []});
+            document.getElementById("directions-panel").style.display = "none";
+            document.getElementById("distance-info").innerHTML = "";
+            lastDestination = null;
+        }
+
+        function calculateAndDisplayRoute(start, end) {
+            if (!start || !end) return;
+            
+            showNotification("Calculating route...", "info");
+            
+            const request = {
+                origin: start,
+                destination: end,
+                travelMode: google.maps.TravelMode[selectedTravelMode.toUpperCase()],
+                provideRouteAlternatives: false,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: selectedTravelMode === "WALKING",
+                avoidTolls: true
+            };
+
+            directionsService.route(request, (response, status) => {
+                const panel = document.getElementById("directions-panel");
+                if (status === "OK") {
+                    directionsRenderer.setDirections(response);
+                    
+                    const route = response.routes[0];
+                    const distance = route.legs[0].distance.text;
+                    const duration = route.legs[0].duration.text;
+                    const modeName = document.getElementById('travel-mode').selectedOptions[0].text;
+                    
+                    document.getElementById("distance-info").innerHTML = `
+                        <span>🚀 Mode: ${modeName}</span>
+                        <span>📏 Distance: ${distance}</span>
+                        <span>⏱️ Estimated time: ${duration}</span>
+                    `;
+                    
+                    panel.style.display = "block";
+                    showNotification("Route calculated successfully!", "success");
+                } else {
+                    console.error("Directions request failed:", status);
+                    panel.style.display = "none";
+                    let errorMessage = "Could not calculate directions. ";
+                    switch(status) {
+                        case "NOT_FOUND":
+                            errorMessage += "Location not found.";
+                            break;
+                        case "ZERO_RESULTS":
+                            errorMessage += "No route could be found.";
+                            break;
+                        case "MAX_ROUTE_LENGTH_EXCEEDED":
+                            errorMessage += "Route is too long.";
+                            break;
+                        default:
+                            errorMessage += "Please try again.";
+                    }
+                    showNotification(errorMessage, "error");
+                }
+            });
+        }
+
+        window.calculateAndDisplayRoute = calculateAndDisplayRoute;
+    </script>
+    
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8ISki5PbIY9_8IeK3tya5MczauFTyWE0&callback=initMap&libraries=geometry">
+    </script>
+</body>
+</html>

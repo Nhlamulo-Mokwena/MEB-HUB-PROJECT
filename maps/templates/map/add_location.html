@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Add Location</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet"  href="/static/assets/styles/admin1.css">
+    <style>
+   .form-container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    .form-title {
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .form-table {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-table td {
+      padding: 0.75rem;
+      vertical-align: top;
+    }
+
+    .form-table tr:not(:last-child) td {
+      border-bottom: 1px solid #eee;
+    }
+
+     .form-input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .btn-upload {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background-color: #28a745;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .btn-upload:hover {
+      background-color: #218838;
+    }
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 1rem 0;
+    }
+
+    .btn-submit:hover {
+      background-color: #2980b9;
+    }
+
+
+    .size-info {
+      font-size: 0.8rem;
+      color: #666;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .custom-back-button {
+      display: inline-block;
+      padding: 8px 16px;
+      border: 2px solid #0d6efd; /* Bootstrap primary color */
+      color: #0d6efd;
+      background-color: transparent;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .custom-back-button:hover {
+      background-color: #0d6efd;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .back-button-container {
+    margin: 1rem;
+    }
+
+    .messages {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1em;
+}
+.messages .success {
+  color: #10B981;
+  background: #e6f9f0;
+  border: 1px solid #10B981;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  list-style: none;
+}
+.messages .error {
+  color: #EF4444;
+  background: #fdeaea;
+  border: 1px solid #EF4444;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  list-style:none;
+}
+
+.messages.error {
+  color: #EF4444;
+  background: #fdeaea;
+  border: 1px solid #EF4444;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  list-style: none;
+}
+</style>
+</head>
+<body>
+    <nav>
+        <div class="nav-title">M.E.B Admin</div>
+        <button class="profile-button" onclick="toggleMenu()">
+            <span id="user-initials">{{initials}}</span>
+        </button>
+    </nav>
+    <div class="dashboard-container">
+      <div class="main-content">
+        <div class="back-button-container">
+          <a href="{% url 'display_map_menu' %}" class="custom-back-button">
+            <i class="bi bi-arrow-left-circle"></i> Back
+          </a>
+        </div>
+        <div class="header">
+          <h1>Add Location</h1>
+        </div>
+        <div class="form-container">
+        <form class="container" action="{% url 'add_location' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if errors %}
+                    <ul class="messages error">
+                        {% for error in errors.values %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            <table>
+            <tr>
+                <td><strong>Location name:</strong></td>
+                <td><input type="text" name="name" class="form-input" required></td>
+            </tr>
+            <tr>
+                <td><strong>Location description:</strong></td>
+                <td><input type="text" name="description" class="form-input" required></td>
+            </tr>
+            <tr>
+                <td><strong>Image-URL:</strong></td>
+                <td><input type="file" name="image" class="form-input" required></td>
+            </tr>
+            <tr>
+                <td><strong>Location-Icon:</strong></td>
+                <td>
+                   <select name="icon" class="form-input">
+                        <option value="building">Building</option>
+                        <option value="bus">Bus</option>
+                        <option value="pitch">Pitch</option>
+                        <option value="recreational">Recreational</option>
+                        <option value="town-hall">Town-hall</option>
+                        <option value="bank">Bank</option>
+                        <option value="music">Music</option>
+                        <option value="restaurant">Restaurant</option>
+                        <option value="library">Library</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Longitude:</strong></td>
+                <td><input type="text" name="longitude" class="form-input" required></td>
+            </tr>
+            <tr>
+                <td><strong>Latitude:</strong></td>
+                <td><input type="text" name="latitude" class="form-input" required></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="ADD LOCATION" class="btn-submit"></td>
+            </tr>
+            </table>
+        </form>
+    </div>
+      </div>
+    </div>
+</body>
+</html>

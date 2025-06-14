@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet"  href="/static/assets/styles/admin1.css">
+    <title>View all locations</title>
+    <style>
+      :root {
+        --primary: #1286ad;
+        --primary-light: #1a9bc4;
+        --primary-dark: #0d6e8c;
+        --secondary: #10b981;
+        --secondary-dark: #059669;
+        --danger: #ef4444;
+        --danger-dark: #dc2626;
+        --warning: #f59e0b;
+        --warning-dark: #d97706;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --white: #ffffff;
+      }
+      body {
+        background: var(--gray-100);
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row; /* explicitly set for clarity */
+        gap: 20px;
+        justify-content: center;
+      }
+      .card {
+        display: block;
+        background: var(--white);
+        color: var(--primary-dark);
+        text-decoration: none;
+        font-weight: bold;
+        padding: 2rem 2.8rem; /* increased padding */
+        border-radius: 12px; /* slightly more rounded */
+        box-shadow: 0 4px 16px rgba(18, 134, 173, 0.1),
+          0 2px 8px rgba(0, 0, 0, 0.08); /* slightly stronger shadow */
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        font-size: 1.25rem; /* increased font size */
+        text-align: center;
+        min-width: 220px; /* increased min-width */
+      }
+      .card:hover {
+        background: var(--primary-light);
+        color: var(--white);
+        box-shadow: 0 6px 16px rgba(18, 134, 173, 0.16),
+          0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .custom-back-button {
+      display: inline-block;
+      padding: 8px 16px;
+      border: 2px solid #0d6efd; /* Bootstrap primary color */
+      color: #0d6efd;
+      background-color: transparent;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .custom-back-button:hover {
+      background-color: #0d6efd;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .back-button-container {
+    margin: 1rem;
+    }
+      @media (max-width: 700px) {
+        .container {
+          max-width: 100%;
+          gap: 12px;
+        }
+        .card {
+          min-width: 140px; /* slightly larger on mobile too */
+          padding: 1.4rem 0.7rem;
+          font-size: 1.08rem;
+        }
+        h1 {
+          font-size: 1.3rem;
+          padding: 8px;
+          margin-bottom: 24px;
+        }
+      }
+      @media (max-width: 480px) {
+        .container {
+          flex-direction: column; /* stack vertically on mobile */
+          align-items: center;
+          gap: 10px;
+        }
+        .card {
+          width: 95vw;
+          min-width: unset;
+          font-size: 1rem;
+          padding: 1.1rem 0.5rem;
+        }
+        h1 {
+          font-size: 1.1rem;
+          padding: 6px;
+          margin-bottom: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+        <div class="nav-title">M.E.B Admin</div>
+        <button class="profile-button" onclick="toggleMenu()">
+            <span id="user-initials">{{initials}}</span>
+        </button>
+    </nav>
+    <div class="dashboard-container">
+      <div class="main-content">
+        <div class="back-button-container">
+          <a href="{% url 'display_map_menu' %}" class="custom-back-button">
+            <i class="bi bi-arrow-left-circle"></i> Back
+          </a>
+        </div>
+        <div class="header">
+          <h1>Update Locations</h1>
+        </div>
+        <div class="header">
+          <p>Choose any of the locations below to update: </p>
+        </div>
+    <div class="container">
+      {% for loc in locations %}
+      <a class="card" href="update_location/{{loc.id}}">{{ loc.name }}</a>
+      {% endfor %}
+    </div>
+      </div>
+    </div>
+  </body>
+</html>

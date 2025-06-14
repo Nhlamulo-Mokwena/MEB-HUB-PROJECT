@@ -16,6 +16,7 @@ import csv
 from administration.views import addAction
 from login.models import Student
 from django.utils import timezone
+from django.db import models
 
 
 # Create your views here.
@@ -145,7 +146,7 @@ def delete_event(request):
     event_id=request.GET.get("eventID")
     if request.method == 'POST':
         event = get_object_or_404(Event, event_id=event_id)
-        event.delete()
+        models.Model.delete(Event.objects.get(event_id=event_id))
         messages.success(request, "Event Deleted")
         addAction(admin_id=admin, record_type="Deleted an event", icon="bi bi-x-circle")
 
@@ -296,6 +297,7 @@ def rsvp_event(request):
     studNum=request.session.get("stud_id")
     student=Student.objects.get(studentNumber=studNum)
     time = event.start_time.strftime('%H:%M')+"-"+event.end_time.strftime('%H:%M')
+    initials=request.session.get('initials')
 
 
     if request.method=='POST':
@@ -324,7 +326,7 @@ def rsvp_event(request):
             messages.success(request, "Invalid email!! Try again")
             return redirect(f"{reverse('rsvp_event')}?eventID={event.event_id}")
 
-    return render(request,'events/rsvp_event.html',{'event':event,'time':time,'student':student})
+    return render(request,'events/rsvp_event.html',{'event':event,'time':time,'student':student,'initials':initials})
 
 def serve_image(request,id): #serve the image from the database as image, converting it from binary to image
     event = Event.objects.get(event_id=id)
