@@ -1,50 +1,31 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-body{
-  font-style:'Poppins', sans-serif;
-  margin: 0%;
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, #f8f9fa, #e9ecef);
   display: flex;
-  height: 100vh;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
-  padding: 20;
-  position: relative;
-  animation: fadeInBody 1.5s ease-out forwards;
+  min-height: 100vh;
+  font-size: 18px;
+  padding: 20px;
+  animation: fadeInBody 1.2s ease-out forwards;
 }
 
 .background-img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('/static/assets/images/tut_logo2.jpg');
-  background-size: cover;
-  z-index: -1;
-  animation: blurBackground 4s infinite alternate;
+  display: none; /* Remove dark blurred background */
 }
-
 
 @keyframes fadeInBody {
   0% {
-      opacity: 0;
+    opacity: 0;
   }
   100% {
-      opacity: 1;
-  }
-}
-
-/* Smooth background blur effect */
-@keyframes blurBackground {
-  0% {
-      filter: blur(10px);
-  }
-  100% {
-      filter: blur(10px);
+    opacity: 1;
   }
 }
 
@@ -52,129 +33,92 @@ body{
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 20px;
+  background-color: white;
+  padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   animation: slideUp 1s ease-out forwards;
 }
 
 @keyframes slideUp {
-  0% {
-      transform: translateY(50px);
-      opacity: 0;
+  from {
+    transform: translateY(30px);
+    opacity: 0;
   }
-  100% {
-      transform: translateY(0);
-      opacity: 1;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
 .logo img {
-  width: 110px;
-  height: 110px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  border: 3px solid white;
-  margin-bottom: 15px;
-  animation: bounceIn 1s ease-out forwards;
+  border: 3px solid #007ea7; /* Updated color and thickness */
+  padding: 4px; /* Optional: adds spacing between image and border */
+  background-color: white; /* Optional: makes border stand out */
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 126, 167, 0.3); /* Optional: subtle glow */
 }
 
-@keyframes bounceIn {
-  0% {
-      transform: scale(0);
-  }
-  50% {
-      transform: scale(1.1);
-  }
-  100% {
-      transform: scale(1);
-  }
-}
-
-.register-box{
-  background: rgba(42, 47, 56, 0.9);
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.register-box {
   width: 100%;
-  animation: fadeInLogin 1.5s ease-out forwards;
+  text-align: center;
 }
 
 .register-box .input-styles {
   width: 100%;
-  padding: 14px;
-  margin: 8px 0;
-  border: none;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s ease-in-out;
+  transition: border-color 0.3s;
 }
 
 .register-box .input-styles:focus {
-  border: 2px solid #5dd39e;
-  animation: focusInput 0.3s ease-in-out forwards;
-}
-
-@keyframes focusInput {
-  0% {
-      transform: scale(1);
-  }
-  50% {
-      transform: scale(1.05);
-  }
-  100% {
-      transform: scale(1);
-  }
-}
-
-@keyframes fadeInLogin {
-  0% {
-      opacity: 0;
-  }
-  100% {
-      opacity: 1;
-  }
+  border-color: #00bbfb;
+  outline: none;
 }
 
 .register-box .btn {
   width: 100%;
-  background-color: #ffd640;
+  background-color: #007ea7;
   color: white;
   padding: 14px;
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 600;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
-  margin-bottom: 15px;
+  margin-top: 15px;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .register-box .btn:hover {
-  background-color: #00bbfb;
-  transform: translateY(-3px) scale(1.05); /* Hover effect for button */
+  background-color: #007ea7;
+  transform: translateY(-2px);
 }
 
-/* admin link styles */
-#admin-link{
-  color: white;
+#admin-link {
+  color: #00bbfb;
   font-size: 16px;
   text-decoration: none;
-  transition: color 0.3s ease-in-out;
+  margin-top: 10px;
+  display: inline-block;
+  transition: color 0.3s;
 }
 
-#admin-link:hover{
-  cursor: pointer;
+#admin-link:hover {
+  color: #03242f;
   text-decoration: underline;
-  color:  #00bbfb;
 }
 
-.account{
-  color: white;
+.account {
+  color: #555;
+  font-size: 14px;
+  margin-top: 10px;
 }

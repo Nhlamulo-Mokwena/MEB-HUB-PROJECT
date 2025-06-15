@@ -3,49 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Home Page</title>
+  <title>M.E.B - Campus Companion</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      height: 100%;
+    :root {
+      --primary-color: #1286ad;
+      --primary-dark: #03242f;
+      --secondary-color: #e9ecef;
+      --background-light: #f8f9fa;
+      --text-dark: #343a40;
+      --text-light: #ffffff;
+      --accent-color: #0aa2d9;
+      --shadow: 0 4px 8px rgba(69, 22, 22, 0.1);
+      --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #f8f9fa, #e9ecef);
-      color: black;
+      background: linear-gradient(to right, var(--background-light), var(--secondary-color));
+      color: var(--text-dark);
       display: flex;
       flex-direction: column;
     }
 
-    body  main {
+    body > main {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
+    /* Navigation Bar */
     nav {
-      background-color: #1286ad;
+      background-color: var(--primary-color);
       padding: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: white;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      position: relative;
+      color: var(--text-light);
+      box-shadow: var(--shadow-hover);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
     .nav-title {
       font-size: 1.8rem;
       font-weight: bold;
       margin-left: 20px;
+      letter-spacing: 1px;
     }
 
     .profile-button {
       width: 50px;
       height: 50px;
-      background-color: white;
-      color: #1286ad;
+      background-color: var(--text-light);
+      color: var(--primary-color);
       font-weight: bold;
       font-size: 1rem;
       border: none;
@@ -55,134 +76,284 @@
       align-items: center;
       justify-content: center;
       margin-right: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .profile-button:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-hover);
+      background-color: var(--primary-dark);
+      color: var(--text-light);
     }
 
     .nav-menu {
       position: absolute;
       right: 20px;
       top: 70px;
-      background: white;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      background: var(--text-light);
+      box-shadow: var(--shadow-hover);
       border-radius: 10px;
       overflow: hidden;
       display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .nav-menu.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .nav-menu a {
-      display: block;
-      padding: 15px;
-      color: #1286ad;
+      display: flex;
+      align-items: center;
+      padding: 15px 25px;
+      color: var(--primary-color);
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
 
     .nav-menu a:hover {
-      background: #d1e0ff;
+      background: rgba(13, 110, 253, 0.1);
+      color: var(--primary-dark);
+      padding-left: 30px;
     }
 
-    .main-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 50px 20px 20px;
+    .nav-menu a i {
+      margin-right: 10px;
+      font-size: 1.1rem;
     }
 
-    .content-container {
-      max-width: 900px;
+    /* Hero Section */
+    .hero-section {
       width: 100%;
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 60px 20px 40px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(18, 134, 173, 0.1), rgba(233, 236, 239, 0.3));
     }
 
-    .content-container h1 {
+    .hero-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-content h1 {
+      font-size: 2.3rem;
       margin-bottom: 15px;
+      color: var(--primary-dark);
+      line-height: 1.3;
     }
 
-    .content-container p {
-      font-size: 1rem;
+    .hero-content p {
+      font-size: 1.1rem;
       color: #555;
-      margin-bottom: 30px;
+      max-width: 700px;
+      margin: 0 auto 30px;
     }
 
-    .content-container a{
-      color: white;
-      text-decoration: none;
-    }
-
-    .button-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      width: 140px;
-      height: 50px;
-      background-color: #1286ad;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-      background-color: #03242f;
-    }
-
+    /* Features Section */
     .features-section {
+      width: 100%;
+      padding: 40px 20px 80px;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title h2 {
+      font-size: 2rem;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .feature-cards-container {
       display: flex;
       justify-content: center;
       gap: 30px;
       flex-wrap: wrap;
-      padding: 30px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .feature-card {
-      background: #ffffff;
+      background: white;
       border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      width: 250px;
+      padding: 30px;
+      width: 350px;
       text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
     }
 
-    .feature-card i {
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
       font-size: 2.5rem;
-      color: #1286ad;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      background: rgba(18, 134, 173, 0.1);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .feature-content {
+      flex: 1;
+      margin-bottom: 25px;
+    }
+
+    .feature-content h3 {
+      color: var(--primary-dark);
       margin-bottom: 15px;
+      font-size: 1.4rem;
     }
 
-    .feature-card h4 {
-      margin-bottom: 10px;
-    }
-
-    .feature-card p {
-      font-size: 0.9rem;
-      color: #444;
-    }
-
-    .footer {
-      background-color: #343a40;
-      color: white;
-      padding: 15px;
-      text-align: center;
+    .feature-content p {
+      color: #555;
       font-size: 1rem;
+      line-height: 1.6;
     }
 
-    .nav-menu a i {
+    .feature-action {
+      margin-top: auto;
+    }
+
+    .btn {
+      width: 100%;
+      height: 50px;
+      background-color: var(--primary-color);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn i {
       margin-right: 8px;
+      font-size: 1.1rem;
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--text-dark);
+      color: var(--text-light);
+      width: 100%;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 40px 20px;
+    }
+
+    .footer-column {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .footer-column h4 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      color: var(--text-light);
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .footer-column h4::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50px;
+      height: 2px;
+      background-color: var(--accent-color);
+    }
+
+    .footer-column p, .footer-column a {
+      margin-bottom: 12px;
+      display: block;
+      color: #adb5bd;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-column a:hover {
+      color: var(--accent-color);
+    }
+
+    .footer-bottom {
+      padding: 15px;
+      background-color: #212529;
+      font-size: 0.9rem;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+      
+      .hero-content p {
+        font-size: 1rem;
+      }
+      
+      .feature-card {
+        width: 100%;
+        max-width: 400px;
+      }
+      
+      .footer-column {
+        min-width: 100%;
+        text-align: center;
+      }
+      
+      .footer-column h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
   </style>
 </head>
@@ -201,74 +372,131 @@
     </div>
   </nav>
 
-<main>
-    <div class="main-container">
-        <div class="content-container">
-        <h1>Welcome to M.E.B</h1>
-        <p>Transform your campus experience: navigate with ease, connect with others, and discover new opportunities!</p>
-        <div class="button-container">
-            <button class="btn"><a href="{% url 'home' %}">View Schedule</a></button>
-            <button class="btn"><a href="{% url 'events_home' %}?studEmail={{email.studentEmail}}">View Events</a></button>
-            <button class="btn">
-              <a href="https://campus-map-2al4.vercel.app/">
-                View Map</a>
-            </button>
-         </div>
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1>Welcome to M.E.B Campus Companion</h1>
+        <p>Your all-in-one platform for navigating campus life and accessing university services</p>
+      </div>
+    </section>
 
-    </div>
-  </div>
-
-    
-    <div class="features-section">
-      <div class="feature-card">
-        <i class="bi bi-bus-front"></i>
-        <h4>Bus Schedules</h4>
-        <p>Check your campus bus schedule easily and never miss a ride again.</p>
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="section-title">
+        <h2>Campus Services</h2>
+        <p>Access everything you need through our integrated platform</p>
       </div>
-      <div class="feature-card">
-        <i class="bi bi-calendar-event"></i>
-        <h4>Campus Events</h4>
-        <p>Explore upcoming events, workshops, and student meetups around campus.</p>
+      
+      <div class="feature-cards-container">
+        <!-- Bus Schedule Card -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-bus-front"></i>
+          </div>
+          <div class="feature-content">
+            <h3>Bus Schedules</h3>
+            <p>View real-time shuttle bus schedules and plan your campus commute efficiently with live updates.</p>
+          </div>
+          <div class="feature-action">
+            <a href="{% url 'home' %}" class="btn">
+              <i class="bi bi-calendar-week"></i> View Schedule
+            </a>
+          </div>
+        </div>
+        
+        <!-- Events Card -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-calendar-event"></i>
+          </div>
+          <div class="feature-content">
+            <h3>Campus Events</h3>
+            <p>Discover and register for academic, social, and career events happening across campus.</p>
+          </div>
+          <div class="feature-action">
+            <a href="{% url 'events_home' %}?studEmail={{email.studentEmail}}" class="btn">
+              <i class="bi bi-calendar-event"></i> Browse Events
+            </a>
+          </div>
+        </div>
+        
+        <!-- Campus Map Card -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-map"></i>
+          </div>
+          <div class="feature-content">
+            <h3>Interactive Map</h3>
+            <p>Navigate campus with our detailed map showing buildings, facilities, and points of interest.</p>
+          </div>
+          <div class="feature-action">
+            <a href="{% url 'display_map' %}" class="btn">
+              <i class="bi bi-map"></i> Explore Map
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <i class="bi bi-map"></i>
-        <h4>Interactive Map</h4>
-        <p>Navigate through your campus easily with an intuitive interactive map.</p>
-      </div>
-    </div>
+    </section>
   </main>
 
-  
- <footer class="footer">
-  <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; padding: 20px;">
-    <div style="flex: 1; min-width: 250px; margin-bottom: 15px;">
-      <h4 style="margin-bottom: 10px;">Contact Us</h4>
-      <p>Email: <a href="mailto:support@meb-system.com" style="color: rgb(7, 201, 255); text-decoration: none;">support@meb-system.com</a></p>
-      <p>Phone: <a href="tel:+1234567890" style="color:rgb(7, 201, 255) rgb(7, 201, 255); text-decoration: none;">+1 (234) 567-890</a></p>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-column">
+        <h4>Contact Us</h4>
+        <p><i class="bi bi-envelope"></i> <a href="mailto:support@meb-system.com">support@meb-system.com</a></p>
+        <p><i class="bi bi-telephone"></i> <a href="tel:+6351388666">+27 (635) 138-8666</a></p>
+        <p><i class="bi bi-geo-alt"></i> 2 Aubrey Matlakala St, Pretoria</p>
+      </div>
+      
+      <div class="footer-column">
+        <h4>Quick Links</h4>
+        <a href="{% url 'account:about' %}"><i class="bi bi-info-circle"></i> About Us</a>
+        <a href="{% url 'account:contact' %}"><i class="bi bi-headset"></i> Contact Us</a>
+        <a href="#"><i class="bi bi-shield-lock"></i> Privacy Policy</a>
+      </div>
+      
+      <div class="footer-column">
+        <h4>M.E.B System</h4>
+        <p>A comprehensive platform designed to enhance student life through seamless access to campus resources and services.</p>
+      </div>
     </div>
-    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
-      <h4 style="margin-bottom: 10px;">Quick Links</h4>
-      <p><a href="{% url 'account:about' %}" style="color:rgb(7, 201, 255); text-decoration: none;">About Us</a></p>
-      <p><a href="{% url 'account:contact' %}" style="color: rgb(7, 201, 255); text-decoration: none;">Contact Us</a></p>
-      <p><a href="#" style="color: rgb(7, 201, 255); text-decoration: none;">Privacy Policy</a></p>
+    
+    <div class="footer-bottom">
+      &copy; 2025 M.E.B. All Rights Reserved.
     </div>
-    <div style="flex: 1; min-width: 250px; margin-bottom: 15px;">
-      <h4 style="margin-bottom: 10px;">M.E.B System</h4>
-      <p>Empowering students to explore, connect, and navigate campus life effortlessly.</p>
-    </div>
-  </div>
-  <div style="text-align: center; padding: 10px; background-color: #212529; font-size: 0.9rem;">
-    &copy; 2025 M.E.B. All Rights Reserved.
-  </div>
-</footer>
+  </footer>
 
-  
   <script>
     function toggleMenu() {
       const menu = document.getElementById("navMenu");
-      menu.style.display = menu.style.display === "block" ? "none" : "block";
+      menu.classList.toggle("show");
+      
+      // Close menu when clicking outside
+      if (menu.classList.contains("show")) {
+        document.addEventListener('click', closeMenuOnClickOutside);
+      } else {
+        document.removeEventListener('click', closeMenuOnClickOutside);
+      }
+    }
+    
+    function closeMenuOnClickOutside(e) {
+      const menu = document.getElementById("navMenu");
+      const button = document.querySelector('.profile-button');
+      
+      if (!menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.remove("show");
+        document.removeEventListener('click', closeMenuOnClickOutside);
+      }
+    }
+        function goBack() {
+      if (document.referrer) {
+        window.history.back();
+      } else {
+        window.location.href = "{% url 'home' %}";
+      }
     }
   </script>
-
 </body>
 </html>

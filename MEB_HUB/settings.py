@@ -14,25 +14,35 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 from django.conf.global_settings import STATICFILES_DIRS, STATIC_ROOT
 import os
+from decouple import config
+import cloudinary
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k=f1*d3i*l1d0cz3)a_z^z74722#p8&@tso9*+bd*5_kjcz&t*'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-k=f1*d3i*l1d0cz3)a_z^z74722#p8&@tso9*+bd*5_kjcz&t*')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Fixed: This was inverted before
+DEBUG = os.environ.get("DEBUG", 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'meb-hub-331v.onrender.com',  # Your specific Render URL
+    '.onrender.com',  # Allow all render subdomains
+]
 
+# If you want to use ALLOWED_HOSTS from environment variable (optional)
+if os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(','))
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,17 +54,29 @@ INSTALLED_APPS = [
     'bus',
     'events',
     'administration',
+    'maps',
+    'cloudinary',
+    'cloudinary_storage',
 ]
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Cloudinary configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    'API_KEY': os.environ.get("CLOUDINARY_API_KEY"),
+    'API_SECRET': os.environ.get("CLOUDINARY_API_SECRET"),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'MEB_HUB.urls'
@@ -79,34 +101,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'MEB_HUB.wsgi.application'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@example.com'
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DATABASES = {
-  'default': {
-     'ENGINE': 'django.db.backends.postgresql',
-      'NAME': 'meb-hub-database',
-      'USER': 'postgres',
-      'PASSWORD': 'nhlamulo25',
-     'HOST': 'localhost',
-      'PORT': '5432'
-  }
-}
+# Database configuration
+# Check for DATABASE_URL first (production), then fall back to individual settings
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
-#DATABASES = {
-#      'default': {     'ENGINE': 'django.db.backends.postgresql',
-#    'NAME': 'mebhubdatabase',  # Database name extracted from the URL
-#    'USER': 'mebhubdatabase',  # Database user extracted from the URL
-#    'PASSWORD': 'MlNLNBDZc8gde8Ogi8pLdPcu7h5YBy3B',  # Database password extracted from the URL
-#    'HOST': 'dpg-cvhotitumphs7391cqgg-a.oregon-postgres.render.com',  # Database host extracted from the URL
-#    'PORT': '5432',  # Default PostgreSQL port,
-# }
-#}
-
+if DATABASE_URL:
+    # Production database (Render)
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # Development database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'test_db'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
+    }
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -122,36 +142,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Africa/Johannesburg'
-
 USE_I18N = True
-
 USE_TZ = True
 
+# Twilio settings
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', 'your_account_sid')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', 'your_auth_token')
+TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER', '+27234567890')
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR/"static"
+    BASE_DIR / "static"
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR,'productionfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'productionfiles')
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MESSAGE_TAGS={
-    messages.ERROR:'danger',
-    messages.SUCCESS:'success'
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+    messages.SUCCESS: 'success'
 }
+
+# Cloudinary config
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET")
+)

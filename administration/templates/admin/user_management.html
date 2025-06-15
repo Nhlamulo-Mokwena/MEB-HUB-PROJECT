@@ -201,6 +201,7 @@
                 <li><a href="{% url 'admin_home' %}" ><i class="bi bi-speedometer2"></i> Dashboard</a></li>
                 <li><a href="{% url 'user_management' %}"><i class="bi bi-people-fill"></i> User Management</a></li>
                 <li><a href="{% url 'bus_menu' %}"><i class="bi bi-bus-front"></i> Bus Management</a></li>
+                <li><a href="{% url 'display_map_menu' %}"><i class="bi bi-map"></i>Maps</a></li>
                 <li><a href="{% url 'events_menu' %}"><i class="bi bi-calendar-event"></i> Events Management</a></li>
                 <li><a href="{% url 'analytics' %}"><i class="bi bi-bar-chart-line"></i> Analytics</a></li>
                 <li><a href="{% url 'account:landing' %}"><i class="bi bi-box-arrow-right"></i> Log Out</a></li>
@@ -278,6 +279,50 @@
             </div>
             </div>
 
+            <div class="dashboard-sections" style=" margin-top: 2rem; padding-right: 20px;">
+                <div class="dashboard-section">
+                    <h3>Filter users by campus</h3>
+                    <form method="get" action="{% url 'user_management' %}">
+                        <select name="campus_id" id="campus_id" class="form-input">
+                            <option value="">-- All Campuses --</option>
+                                {% for campus in campuses %}
+                            <option value="{{ campus.campus_id }}" {% if request.GET.campus_id == campus_id %}selected{% endif %}>
+                                 {{ campus.campus_name }}
+                        </option>
+                        {% endfor %}
+                        </select>
+                        <button type="submit" class="form-submit">Filter</button>
+                    </form>
+                    {% if  request.GET.campus_id %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student Number</th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>Last Login Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                     {% for student in students %}
+                        <tr>
+                            <td>{{ student.studentNumber }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.surname }}</td>
+                            <td>{{student.login_time}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                    {% else %}
+                        <table>
+                            <tr>
+                                <td>No users found</td>
+                            </tr>
+                        </table>
+                     {% endif %}
+                </div>
+           </div>
             <div class="dashboard-sections" style="padding-right: 20px; margin-top: 2rem;" >
                 <div class="dashboard-section" style="grid-column: span 2; ">
                     <div class="section-header">
@@ -331,11 +376,8 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <a href="{% url 'user_management' %}" class="btn btn-warning" style="text-decoration: none;">Edit</a>
-        <a href="{% url 'user_management' %}" class="btn btn-danger" style="text-decoration: none;">Delete</a>
         <button type="button" class="btn btn-secondary" id="modalCloseBtn">Close</button>
       </div>
-
     </div>
   </div>
 <!-- Bootstrap Icons CDN for eye icon -->

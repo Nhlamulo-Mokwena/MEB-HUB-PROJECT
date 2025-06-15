@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f6f9;
+      color: #333;
+    }
+
+    nav {
+      background-color: #1286ad;
+      padding: 1rem 2rem;
+      color: white;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+    }
+
+    h2, h3 {
+      color: #1286ad;
+      margin-top: 1.5rem;
+    }
+
+    .dashboard-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      justify-content: flex-start;
+    }
+
+    .card {
+      flex: 1 1 calc(25% - 1rem);
+      min-width: 200px;
+      background-color: #e8f1ff;
+      border-left: 5px solid #1286ad;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card i {
+      font-size: 1.8rem;
+      color: #1286ad;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    ul li {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: 15px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-outline-primary {
+      background-color: #e7f0ff;
+      color: #1286ad;
+      border: 1px solid #1286ad;
+    }
+
+    .btn-outline-success {
+      background-color: #e9f9ef;
+      color: #198754;
+      border: 1px solid #198754;
+    }
+
+    .btn-outline-warning {
+      background-color: #fff9e6;
+      color: #ffc107;
+      border: 1px solid #ffc107;
+    }
+
+    .button-group {
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>M.E.B Event Report</nav>
+
+  <main>
+    <h2>Event Summary</h2>
+    <div class="dashboard-cards">
+      <div class="card"><i class="bi bi-calendar-event-fill"></i> Total Events: {{ event_count }}</div>
+      <div class="card"><i class="bi bi-hourglass-split"></i> Upcoming: {{ upcoming_events|length }}</div>
+      <div class="card"><i class="bi bi-clock-history"></i> Past: {{ past_events|length }}</div>
+      <div class="card"><i class="bi bi-hourglass-top"></i> Ongoing: {{ ongoing_events|length }}</div>
+      <div class="card"><i class="bi bi-calendar-week-fill"></i> This Week: {{ recent_events|length }}</div>
+      <div class="card"><i class="bi bi-calendar-day-fill"></i> Today: {{ today_events|length }}</div>
+      <div class="card"><i class="bi bi-calendar2-day-fill"></i> Tomorrow: {{ tomorrow_events|length }}</div>
+    </div>
+
+    <h3>📅 Events This Week</h3>
+    <ul>
+      {% for event in recent_events %}
+        <li>
+          <strong>{{ event.description }}</strong><br>
+          Date: {{ event.date }} | Location: {{ event.location }}<br>
+          Time: {{ event.start_time }} - {{ event.end_time }}
+        </li>
+      {% empty %}
+        <li>No events in the past 7 days.</li>
+      {% endfor %}
+    </ul>
+
+    <div class="button-group">
+      <a href="{% url 'events:event_report_pdf' %}" class="btn btn-outline-primary">
+        <i class="bi bi-file-earmark-pdf-fill"></i> Download PDF
+      </a>
+      <a href="{% url 'events:event_report_docx' %}" class="btn btn-outline-success">
+        <i class="bi bi-file-earmark-word-fill"></i> Download DOCX
+      </a>
+      <a href="{% url 'events:event_report_csv' %}" class="btn btn-outline-warning">
+        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download CSV
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>

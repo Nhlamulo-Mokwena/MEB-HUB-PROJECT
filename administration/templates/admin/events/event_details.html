@@ -313,6 +313,7 @@
                 <li><a href="{% url 'admin_home' %}" ><i class="bi bi-speedometer2"></i> Dashboard</a></li>
                 <li><a href="{% url 'user_management' %}"><i class="bi bi-people-fill"></i> User Management</a></li>
                 <li><a href="{% url 'bus_menu' %}"><i class="bi bi-bus-front"></i> Bus Management</a></li>
+                <li><a href="{% url 'display_map_menu' %}"><i class="bi bi-map"></i>Maps</a></li>
                 <li><a href="{% url 'events_menu' %}"><i class="bi bi-calendar-event"></i> Events Management</a></li>
                 <li><a href="{% url 'analytics' %}"><i class="bi bi-bar-chart-line"></i> Analytics</a></li>
                 <li><a href="{% url 'account:landing' %}"><i class="bi bi-box-arrow-right"></i> Log Out</a></li>
@@ -322,13 +323,11 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-                <h1>Events Report</h1>
+                <h1>Event RSVP Report </h1>
         </div>
         <!-- Report Download Form -->
         <div class="report-container">
             <div class="report-card">
-                <h3>Generate Event Report</h3>
-
                 <form id="reportForm" method="get">
                     <div class="form-group">
                         <div class="dropdown">
@@ -369,7 +368,6 @@
                         <i class="bi bi-cloud-arrow-down btn-icon"></i>  Download Report
                     </button>
                 </form>
-                <a href="{% url 'events_menu' %}" class="back-link">← Back to Events Menu</a>
             </div>
         </div>
     </div>

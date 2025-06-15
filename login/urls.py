@@ -13,6 +13,11 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path("contact/", views.contact, name="contact"),
     path("about/", views.about, name="about"),
-    path("update_profile/",views.update_profile,name="update_profile")
+    path("about/", views.about, name="about"),
+    path("landing_about/", views.landing_about, name="landing_about"),
+    path("landing_contact/", views.landing_contact, name="landing_contact"),
+    path("update_profile/",views.update_profile,name="update_profile"),
+    path('reset-password/', views.reset_password, name='reset_password'),
+
 ]
 
