@@ -2,8 +2,6 @@
 
 A comprehensive web application designed to help first-year students at Tshwane University of Technology navigate campus life with ease. MEB-HUB provides essential information including bus schedules, campus event calendars, and interactive campus maps - all in one convenient platform.
 
-![MEB-HUB Banner](add-screenshot-here.png)
-
 ## 🎯 Problem Statement
 
 First-year students often struggle with:
@@ -11,6 +9,7 @@ First-year students often struggle with:
 - Staying updated on campus events
 - Navigating the campus effectively
 - Accessing centralized student resources
+- admin panel to manage all the resources
 
 MEB-HUB solves these challenges by providing a user-friendly, centralized platform for all campus-related information.
 
@@ -19,24 +18,32 @@ MEB-HUB solves these challenges by providing a user-friendly, centralized platfo
 ## ✨ Features
 
 ### 🚌 Bus Schedule Management
-- Real-time bus schedule information
-- Route planning and tracking
-- Schedule notifications and updates
+- bus schedule information
+- Easy-to-navigate timetable interface
 
 ### 📅 Campus Events Calendar
 - Browse upcoming campus events
-- Filter events by category (academic, social, sports)
-- RSVP and save favorite events
+- Event details with dates and locations
+- Stay informed about important campus activities
 
 ### 🗺️ Interactive Campus Maps
-- Detailed campus navigation
-- Building locator with descriptions
-- Accessibility information
+- Google Maps integration for campus navigation
+- Building locator with detailed descriptions
+- Find lecture halls, facilities, and amenities
+- Accessibility information for campus locations
 
 ### 👤 Student Portal
-- User authentication and profiles
-- Personalized dashboard
-- Bookmark favorite locations and events
+- User authentication and secure login
+- Personalized student dashboard
+- Profile management
+
+### 🔧 Admin Panel
+- intergrated simple admin interface
+- Manage bus schedules, events and routes
+- Add, edit, and delete campus events
+- Update campus locations and maps
+- User management
+- Real-time data management
 
 ---
 
@@ -60,17 +67,26 @@ MEB-HUB solves these challenges by providing a user-friendly, centralized platfo
 
 ## 📸 Screenshots
 
-### Home Page
+## 📸 Screenshots
+
+### 🏠 Home Page
 ![Home Page](screenshots/home.png)
-*Main landing page with quick access to all features*
+*Main dashboard with quick access to campus resources*
 
-### Bus Schedule
+### 🚌 Bus Schedule
 ![Bus Schedule](screenshots/bus-schedule.png)
-*Real-time bus schedule information*
+*Real-time bus schedule information for student commuters*
 
-### Campus Map
-![Campus Map](screenshots/campus-map.png)
-*Interactive campus navigation*
+### 📅 Campus Events
+![Campus Events](screenshots/events.png)
+*Stay updated with campus activities and important dates*
+
+### 🗺️ Campus Map
+*Interactive Google Maps integration - requires API key configuration for demonstration*
+
+### ⚙️ Custom Admin Dashboard
+![Admin Panel](screenshots/admin.png)
+*Custom-built administrative interface for managing campus data and user accounts. Features include bus schedule management, event creation and updates, campus location and user management settings. Designed with an intuitive UI for efficient content management.*
 
 ---
 
