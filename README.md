@@ -68,11 +68,14 @@ MEB-HUB solves these challenges by providing a user-friendly, centralized platfo
 ## 📸 Screenshots
 
 ### 🏠 Home Page
-![Home Page](screenshots/home.png)
+![Home Page](screenshots/home1.png)
+![](screenshots/home2.png)
+![](screenshots/home3.png)
+![](screenshots/login.png)
 *Main dashboard with quick access to campus resources*
 
 ### 🚌 Bus Schedule
-![Bus Schedule](screenshots/bus-schedule.png)
+![Bus Schedule](screenshots/bus_schedules.png)
 *Real-time bus schedule information for student commuters*
 
 ### 📅 Campus Events
