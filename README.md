@@ -86,7 +86,7 @@ MEB-HUB solves these challenges by providing a user-friendly, centralized platfo
 *Interactive Google Maps integration - requires API key configuration for demonstration*
 
 ### ⚙️ Custom Admin Dashboard
-![Admin Panel](screenshots/admin.png)
+![Admin Panel](screenshots/admin_panel.png)
 *Custom-built administrative interface for managing campus data and user accounts. Features include bus schedule management, event creation and updates, campus location and user management settings. Designed with an intuitive UI for efficient content management.*
 
 ### 👥 Development Team
