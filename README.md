@@ -21,7 +21,7 @@ MEB-HUB solves these challenges by providing a user-friendly, centralized platfo
 - bus schedule information
 - Easy-to-navigate timetable interface
 
-### 📅 Campus Events Calendar
+### 📅 Campus Events
 - Browse upcoming campus events
 - Event details with dates and locations
 - Stay informed about important campus activities
@@ -67,8 +67,6 @@ MEB-HUB solves these challenges by providing a user-friendly, centralized platfo
 
 ## 📸 Screenshots
 
-## 📸 Screenshots
-
 ### 🏠 Home Page
 ![Home Page](screenshots/home.png)
 *Main dashboard with quick access to campus resources*
@@ -87,6 +85,10 @@ MEB-HUB solves these challenges by providing a user-friendly, centralized platfo
 ### ⚙️ Custom Admin Dashboard
 ![Admin Panel](screenshots/admin.png)
 *Custom-built administrative interface for managing campus data and user accounts. Features include bus schedule management, event creation and updates, campus location and user management settings. Designed with an intuitive UI for efficient content management.*
+
+### 👥 Development Team
+![Development Team](screenshots/developers.png)
+*Meet the team behind MEB-HUB: A collaborative effort by Computer Science students at Tshwane University of Technology. This project showcases our combined skills in full-stack development, database design, and user experience.*
 
 ---
 
@@ -157,56 +159,11 @@ MEB-HUB-PROJECT/
 
 ---
 
-## 🎯 Roadmap / Future Features
-
-- [ ] Mobile app version (React Native/Kotlin)
-- [ ] Push notifications for bus delays
-- [ ] Integration with university API
-- [ ] Peer-to-peer messaging system
-- [ ] Study group finder
-- [ ] Meal plan integration
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! If you'd like to contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👤 Author
-
-**Phillemon Nhlamulo Mokwena**
-
-- GitHub: [@Nhlamulo-Mokwena](https://github.com/Nhlamulo-Mokwena)
-- Email: mokwenaphillimon9@gmail.com
-- LinkedIn: [Your LinkedIn Profile]
-
----
-
 ## 🙏 Acknowledgments
 
 - Tshwane University of Technology
-- My lecturers and classmates for feedback and support
+- My lecturers and my Team feedback and support
 - The Django community for excellent documentation
-
----
-
-## ⭐ Show Your Support
-
-If you found this project helpful or interesting, please consider giving it a star ⭐! It helps others discover the project and motivates me to continue improving it.
 
 ---
 
