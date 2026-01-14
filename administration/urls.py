@@ -1,4 +1,3 @@
-from tkinter.font import names
 
 from django.urls import path
 from . import views
@@ -41,5 +40,6 @@ urlpatterns = [
     path('download_filtered_events_admin',views.download_filtered_events_admin,name='download_filtered_events_admin'),
     path('events_stats/',views.events_stats,name='events_stats'),
     path('download_student_details_pdf',views.download_student_details_pdf,name='download_student_details_pdf'),
-    path('download_student_details_csv',views.download_student_details_csv,name='download_student_details_csv')
+    path('download_student_details_csv',views.download_student_details_csv,name='download_student_details_csv'),
+    path('admin_report',views.admin_report,name='admin_report')
 ]

@@ -2,41 +2,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register</title>
   <link rel="stylesheet" href="{% static 'assets/styles/register.css' %}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    .text-danger {
+      color: red;
+      font-size: 0.875rem;
+      margin-top: 4px;
+    }
+    .is-invalid {
+      border-color: red !important;
+    }
+    .register-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+    .register-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo img {
+      max-width: 100%;
+      height: auto;
+    }
+    form input,
+    form select {
+      margin-bottom: 10px;
+    }
+    .account {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            background: none;
+            border: none;
+            padding: 0 5px;
+        }
+
+        .password-toggle:hover {
+            color: #1286ad;
+        }
+
+         .password-input-group {
+            position: relative;
+        }
+  </style>
 </head>
 <body>
-  <div class="background-img"></div>
   <div class="register-container">
     <div class="logo">
       <img src="{% static 'assets/images/TUT-Logo1.jpg' %}" alt="tut-logo" width="200" height="200">
     </div>
     <div class="register-box">
-      <form action = "{% url 'account:register' %}" method="POST">
+      <form id="registerForm" action="{% url 'account:register' %}" method="POST" novalidate>
         {% csrf_token %}
-        <input type="text" placeholder="student-number" name="student_no" required>
-        <input type="text" placeholder="student-name" name="name">
-        <input type="text" placeholder="student-surname" name="surname">
-        <input type="email" placeholder="student-email" name="student_email" required>
-        <input type="password" placeholder="Password" name="password" required>
-        <input type="password" placeholder="Confirm Password" name="confirm_password" required>
-        <button type="submit" class="btn">REGISTER</button>
+
+        <input type="text" class="form-control" placeholder="Student Number" name="student_no"
+               value="{{ form_data.student_no|default:'' }}" required>
+        {% if errors.student_no %}<div class="text-danger">{{ errors.student_no }}</div>{% endif %}
+
+        <input type="text" class="form-control" placeholder="Student Name" name="name"
+               value="{{ form_data.name|default:'' }}" required>
+        {% if errors.name %}<div class="text-danger">{{ errors.name }}</div>{% endif %}
+
+        <input type="text" class="form-control" placeholder="Student Surname" name="surname"
+               value="{{ form_data.surname|default:'' }}" required>
+        {% if errors.surname %}<div class="text-danger">{{ errors.surname }}</div>{% endif %}
+
+        <input type="email" class="form-control" placeholder="Student Email" name="student_email"
+               value="{{ form_data.student_email|default:'' }}" required>
+        {% if errors.student_email %}<div class="text-danger">{{ errors.student_email }}</div>{% endif %}
+
+        {% if errors.campus_id %}<div class="text-danger">{{ errors.campus_id }}</div>{% endif %}
+
+        <div  class="password-input-group">
+          <input type="password" class="form-control" placeholder="Password" name="password" id="password" required>
+          <div id="passwordErrors" class="text-danger"></div>
+          <button type="button" class="password-toggle" id="togglePassword" >
+                      <i class="bi bi-eye-slash"></i>
+          </button>
+        </div>
+
+        <div  class="password-input-group">
+          <input type="password" class="form-control" placeholder="Confirm Password" name="confirm_password" id="confirm_password" required>
+          <div id="confirmError" class="text-danger"></div>
+          <button type="button" class="password-toggle" id="togglePassword2" >
+                      <i class="bi bi-eye-slash"></i>
+          </button>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-3">REGISTER</button>
       </form>
-       <span class="account"><a id="admin-link" href="{% url 'account:login' %}">login</a></span>
-        {% for message in messages %}
+
+      <span class="account"><a href="{% url 'account:login' %}">Already have an account? Login</a></span>
+      {% for message in messages %}
             <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
                 {{message}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        {% endfor %}
+      {% endfor %}
     </div>
   </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+
+  <script>
+    function validateRequiredFields() {
+      const requiredFields = {
+        student_no: 'Student Number',
+        name: 'Student Name',
+        surname: 'Student Surname',
+        student_email: 'Student Email',
+        // password & confirm_password handled separately
+      };
+
+      let allValid = true;
+
+      for (const field in requiredFields) {
+        const input = document.querySelector(`[name="${field}"]`);
+        const existingError = input.nextElementSibling;
+
+        // Reset previous styling
+        input.classList.remove('is-invalid');
+        if (existingError && existingError.classList.contains('text-danger')) {
+          existingError.remove();
+        }
+
+        // Empty check
+        if (!input.value.trim()) {
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'text-danger';
+          errorDiv.innerText = `${requiredFields[field]} is required.`;
+          input.classList.add('is-invalid');
+          input.parentNode.insertBefore(errorDiv, input.nextSibling);
+          allValid = false;
+        }
+      }
+
+      return allValid;
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+      const requiredValid = validateRequiredFields();
+
+      if (!requiredValid) {
+        e.preventDefault();
+        return;
+      }
+
+      const passwordField = document.getElementById('password');
+      const confirmField = document.getElementById('confirm_password');
+      const passwordErrors = document.getElementById('passwordErrors');
+      const confirmError = document.getElementById('confirmError');
+
+      const password = passwordField.value.trim();
+      const confirmPassword = confirmField.value.trim();
+
+      let isValid = true;
+      let errors = [];
+
+      // Reset previous errors
+      passwordField.classList.remove('is-invalid');
+      confirmField.classList.remove('is-invalid');
+      passwordErrors.innerHTML = '';
+      confirmError.innerHTML = '';
+
+      // Password strength checks
+      if (password.length < 8) {
+        errors.push("Password must be at least 8 characters long.");
+      }
+      if (!/[A-Z]/.test(password)) {
+        errors.push("Password must contain at least one uppercase letter.");
+      }
+      if (!/[0-9]/.test(password)) {
+        errors.push("Password must contain at least one number.");
+      }
+      if (!/[!@#$%^&*(),.?\":{}|<>_\-+=~`[\]\\\/]/.test(password)) {
+        errors.push("Password must contain at least one special character.");
+      }
+
+      if (errors.length > 0) {
+        isValid = false;
+        passwordField.classList.add('is-invalid');
+        passwordErrors.innerHTML = errors.map(err => `<div>${err}</div>`).join('');
+      }
+
+      // Password match check
+      if (password !== confirmPassword) {
+        isValid = false;
+        confirmField.classList.add('is-invalid');
+        confirmError.innerText = "Passwords do not match.";
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+  </script>
+  <script>
+    // Password visibility toggle
+    document.getElementById("togglePassword").addEventListener("click", function() {
+        const passwordInput = document.getElementById("password");
+        const icon = this.querySelector("i");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        }
+    });
+
+    // Password visibility toggle
+    document.getElementById("togglePassword2").addEventListener("click", function() {
+        const passwordInput = document.getElementById("confirm_password");
+        const icon = this.querySelector("i");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        }
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          crossorigin="anonymous"></script>
 </body>
 </html>

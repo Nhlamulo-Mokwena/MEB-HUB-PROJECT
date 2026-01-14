@@ -1,4 +1,4 @@
-
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from login.models import Admin
@@ -16,6 +16,7 @@ import csv
 from administration.views import addAction
 from login.models import Student
 from django.utils import timezone
+from django.db import models
 
 
 # Create your views here.
@@ -47,6 +48,19 @@ def add_event(request):
         s_time = datetime.strptime(start_time, '%H:%M')
         e_time = datetime.strptime(end_time, '%H:%M')
         image_data=image_file.read() #read binary file so it can be stored in the database
+
+        # Check for duplicates (based on title, date, location, start_time)
+        duplicate_event = Event.objects.filter(
+            Q(title__iexact=title),
+            Q(location__iexact=location),
+            date=date,
+            start_time=s_time.time(),
+            end_time = e_time.time()
+        ).exists()
+
+        if duplicate_event:
+            messages.warning(request, "Event already exists.")
+            return redirect('add_event')  # Or return to the same page
 
         if image_file:
             event = Event(
@@ -145,7 +159,7 @@ def delete_event(request):
     event_id=request.GET.get("eventID")
     if request.method == 'POST':
         event = get_object_or_404(Event, event_id=event_id)
-        event.delete()
+        models.Model.delete(Event.objects.get(event_id=event_id))
         messages.success(request, "Event Deleted")
         addAction(admin_id=admin, record_type="Deleted an event", icon="bi bi-x-circle")
 
@@ -296,6 +310,7 @@ def rsvp_event(request):
     studNum=request.session.get("stud_id")
     student=Student.objects.get(studentNumber=studNum)
     time = event.start_time.strftime('%H:%M')+"-"+event.end_time.strftime('%H:%M')
+    initials=request.session.get('initials')
 
 
     if request.method=='POST':
@@ -306,6 +321,15 @@ def rsvp_event(request):
         guest_surname = request.POST['surname']
         email = request.POST['email']
         done_at=timezone.now()
+
+        duplicate_rsvp = RSVP.objects.filter(
+            event_id=event_id,
+            guest_studentnumber=guest_student_no
+        ).exists()
+
+        if duplicate_rsvp:
+            messages.warning(request, "RSVP already done.")
+            return redirect('events_home')  # Or return to the same page
 
 
         if is_valid_email(email): #check if the email is valid
@@ -324,7 +348,7 @@ def rsvp_event(request):
             messages.success(request, "Invalid email!! Try again")
             return redirect(f"{reverse('rsvp_event')}?eventID={event.event_id}")
 
-    return render(request,'events/rsvp_event.html',{'event':event,'time':time,'student':student})
+    return render(request,'events/rsvp_event.html',{'event':event,'time':time,'student':student,'initials':initials})
 
 def serve_image(request,id): #serve the image from the database as image, converting it from binary to image
     event = Event.objects.get(event_id=id)

@@ -1,6 +1,3 @@
-from msilib.schema import tables
-from tkinter.constants import CASCADE
-
 from django.db import models
 from django.db.models import IntegerField, CharField, OneToOneField, ForeignKey
 from django.utils import timezone
@@ -23,6 +20,7 @@ class Student(models.Model):
         password = models.CharField(max_length=150)
         campus_id = models.ForeignKey(Campus,on_delete=models.CASCADE)
         login_time = models.DateTimeField(default=timezone.now)
+
 
 def __str__(self):
         return f"{self.studentNumber} {self.name} {self.surname}"

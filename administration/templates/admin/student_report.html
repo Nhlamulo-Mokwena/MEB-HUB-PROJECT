@@ -206,6 +206,7 @@
             <a href="{% url 'user_management' %}">User Management</a>
             <a href="{% url 'events_menu' %}">Events Management</a>
             <a href="{% url 'bus_menu' %}">Bus Management</a>
+            <a href="{% url 'display_map_menu' %}">Maps</a>
             <a href="{% url 'analytics' %}">Analytics</a>
             <a href="{% url 'account:logout' %}">Log Out</a>
         </div>
@@ -245,7 +246,7 @@
         <div class="stat-info">
           <span>
             {% for campus in campus_counts %}
-              {{ campus.campus__campus_name }}: {{ campus.count }}<br>
+              {{ campus.campus_name }}: {{ campus.count }}<br>
             {% empty %}
               No campus data
             {% endfor %}

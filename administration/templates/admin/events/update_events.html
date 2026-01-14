@@ -116,6 +116,28 @@
         .btn-outline-secondary:hover {
             transform: translateY(-2px);
         }
+
+            .custom-back-button {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 2px solid #0d6efd; /* Bootstrap primary color */
+  color: #0d6efd;
+  background-color: transparent;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.custom-back-button:hover {
+  background-color: #0d6efd;
+  color: #fff;
+  text-decoration: none;
+}
+
+.back-button-container {
+  margin: 1rem;
+}
         @media (max-width: 576px) {
             .button-group {
                 flex-direction: column;
@@ -149,6 +171,11 @@
         <div class="main-content">
         <div class="header">
                 <h1>Events</h1>
+        </div>
+         <div class="back-button-container">
+            <a href="{% url 'events_menu' %}" class="custom-back-button">
+                <i class="bi bi-arrow-left-circle"></i> Back
+            </a>
         </div>
         <div class="form-content">
             <form action="{% url 'update_events' %}?adminID={{admin.admin_id}}" method="POST">
@@ -186,9 +213,6 @@
                     <button type="submit" class="btn btn-primary px-4">
                         <i class="bi bi-pencil-square me-2"></i>Edit Selected Event
                     </button>
-                </div>
-                <div class="back-link">
-                        <a href="{% url 'events_menu' %}?adminEmail={{admin.email}}" class="back-link">← Back to Events Menu</a>
                 </div>
             </form>
         </div>
